@@ -16,8 +16,12 @@ export default function CartPage() {
 
   const { cart, increaseQty, decreaseQty, removeFromCart } = cartContext;
 
-  const total = cart.reduce(
-    (sum, item) => sum + item.pricing.amount * item.quantity,
+  // Tell TypeScript cart is an array (no feature change)
+  const safeCart = cart as any[];
+
+  const total = safeCart.reduce(
+    (sum: number, item: any) =>
+      sum + item.pricing.amount * item.quantity,
     0
   );
 
@@ -25,18 +29,20 @@ export default function CartPage() {
     <div className="min-h-screen bg-black text-white px-6 py-20">
       <h1 className="text-4xl font-bold mb-10">Your Cart</h1>
 
-      {cart.length === 0 ? (
+      {safeCart.length === 0 ? (
         <p className="text-gray-400">Your cart is empty.</p>
       ) : (
         <>
           <div className="space-y-8">
-            {cart.map((item) => (
+            {safeCart.map((item: any) => (
               <div
                 key={item.id}
                 className="flex justify-between items-center border-b border-yellow-600/30 pb-6"
               >
                 <div>
-                  <h2 className="text-xl font-semibold">{item.title}</h2>
+                  <h2 className="text-xl font-semibold">
+                    {item.title}
+                  </h2>
                   <p className="text-yellow-500 font-medium">
                     ₹{item.pricing.amount}
                   </p>
