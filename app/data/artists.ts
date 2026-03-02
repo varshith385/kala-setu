@@ -1,0 +1,36 @@
+export const artists = [
+  {
+    id: "artist-001",
+    name: "Aarav Sharma",
+    bio: "A contemporary Indian artist blending traditional motifs with modern luxury aesthetics.",
+    profileImage: "/artist1.jpg",
+    verified: true,
+    rating: 4.8,
+    totalSales: 120,
+    followers: 540,
+    location: "Hyderabad",
+    experience: "8 Years",
+    specialties: ["Acrylic", "Heritage Themes", "Luxury Art"],
+    social: {
+      instagram: "@aarav.art",
+      website: "www.aaravart.com",
+    },
+  },
+  {
+    id: "artist-002",
+    name: "Riya Verma",
+    bio: "A digital illustrator known for futuristic Indian themes and bold storytelling.",
+    profileImage: "/artist2.jpg",
+    verified: true,
+    rating: 4.7,
+    totalSales: 85,
+    followers: 420,
+    location: "Mumbai",
+    experience: "5 Years",
+    specialties: ["Digital Art", "Modern Portraits", "Mythology"],
+    social: {
+      instagram: "@riya.creates",
+      website: "www.riyaverma.art",
+    },
+  },
+];
