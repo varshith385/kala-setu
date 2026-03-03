@@ -89,8 +89,10 @@ export default function ArtworkClient({ artwork }: any) {
               addToCart({
                 id: artwork.id,
                 title: artwork.title,
-                price: discountedPrice,
-                image: artwork.images[0],
+                pricing: {
+                  amount: discountedPrice,
+                },
+                quantity: 1,
               });
 
               router.push("/cart");

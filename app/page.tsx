@@ -4,6 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { artworks } from "./data/artworks";
 
+type Artwork = typeof artworks[number];
+
 export default function Home() {
   const featured = artworks.filter((art) => art.featured);
 
@@ -74,7 +76,17 @@ export default function Home() {
 
 /* ================= CATEGORY SECTION ================= */
 
-function CategorySection({ title, description, link, image }) {
+function CategorySection({
+  title,
+  description,
+  link,
+  image,
+}: {
+  title: string;
+  description: string;
+  link: string;
+  image: string;
+}) {
   return (
     <section className="px-6 md:px-16 py-24 border-t border-yellow-600/20">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
@@ -111,7 +123,13 @@ function CategorySection({ title, description, link, image }) {
 
 /* ================= ARTWORK GRID SECTION ================= */
 
-function ArtworkSection({ title, data }) {
+function ArtworkSection({
+  title,
+  data,
+}: {
+  title: string;
+  data: Artwork[];
+}) {
   return (
     <section className="px-6 md:px-16 py-24 border-t border-yellow-600/20">
       <h2 className="text-3xl md:text-4xl text-yellow-500 mb-12">
@@ -141,7 +159,7 @@ function ArtworkSection({ title, data }) {
             </p>
 
             <p className="text-xs text-gray-500 uppercase">
-              {art.type}
+              {art.details.category}
             </p>
 
           </Link>

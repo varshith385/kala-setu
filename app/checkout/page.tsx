@@ -6,55 +6,49 @@ export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
 
   const total = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.pricing.amount * item.quantity,
     0
   );
 
-  const handleFakePayment = () => {
-    alert("Payment Successful (Demo Mode)");
+  const handlePayment = () => {
+    alert("Payment Successful (Demo)");
     clearCart();
   };
 
   return (
-    <main className="min-h-screen bg-black text-white px-16 py-20">
-      <h1 className="text-4xl text-yellow-500 mb-12">
-        Checkout
-      </h1>
+    <div className="min-h-screen bg-black text-white px-6 py-20">
+      <h1 className="text-4xl font-bold mb-10">Checkout</h1>
 
       {cart.length === 0 ? (
-        <p className="text-gray-400">
-          Your cart is empty.
-        </p>
+        <p className="text-gray-400">Your cart is empty.</p>
       ) : (
         <>
           <div className="space-y-6 mb-10">
             {cart.map((item) => (
               <div
                 key={item.id}
-                className="border-b border-yellow-600/20 pb-4"
+                className="flex justify-between border-b border-yellow-600/30 pb-4"
               >
-                <h3 className="text-yellow-500">
-                  {item.title}
-                </h3>
-                <p>
-                  ₹{item.price} × {item.quantity}
-                </p>
+                <span>{item.title}</span>
+                <span>
+                  ₹{item.pricing.amount} × {item.quantity}
+                </span>
               </div>
             ))}
           </div>
 
-          <h2 className="text-2xl text-yellow-500 mb-6">
+          <h2 className="text-2xl font-bold mb-6">
             Total: ₹{total}
           </h2>
 
           <button
-            onClick={handleFakePayment}
-            className="px-8 py-3 bg-yellow-600 text-black hover:bg-yellow-500 transition"
+            onClick={handlePayment}
+            className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-3 font-semibold transition"
           >
             Pay Now
           </button>
         </>
       )}
-    </main>
+    </div>
   );
 }
