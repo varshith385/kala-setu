@@ -17,19 +17,51 @@ export const artists = [
       website: "www.aaravart.com",
     },
 
-    // ✅ RESTORED ARTWORKS
     artworks: [
       {
         id: "art-001",
         title: "Golden Heritage",
         image: "/art1.jpg",
-        price: 15000,
+        price: 13500,
+        originalPrice: 15000,
+        category: "Physical Art",
+        medium: "Acrylic on Canvas",
+        dimensions: "24x36 inches",
+        year: 2024,
+        framed: true,
+        signed: true,
+        description:
+          "A celebration of Indian royal heritage using rich gold textures and layered brush techniques.",
       },
       {
         id: "art-002",
         title: "Royal Essence",
         image: "/art2.jpg",
         price: 22000,
+        originalPrice: 25000,
+        category: "Physical Art",
+        medium: "Oil on Canvas",
+        dimensions: "30x40 inches",
+        year: 2023,
+        framed: false,
+        signed: true,
+        description:
+          "A bold exploration of regal themes with deep contrast and dramatic highlights.",
+      },
+    ],
+
+    reviews: [
+      {
+        id: "rev-001",
+        name: "Rahul",
+        rating: 5,
+        comment: "Absolutely stunning artwork and premium finish!",
+      },
+      {
+        id: "rev-002",
+        name: "Meera",
+        rating: 4,
+        comment: "Loved the detailing and communication.",
       },
     ],
   },
@@ -52,19 +84,45 @@ export const artists = [
       website: "www.riyaverma.art",
     },
 
-    // ✅ RESTORED ARTWORKS
     artworks: [
       {
         id: "art-003",
         title: "Neo Bharat",
         image: "/art3.jpg",
-        price: 8000,
+        price: 7500,
+        originalPrice: 8000,
+        category: "Digital Art",
+        medium: "Digital Illustration",
+        dimensions: "High Resolution (Printable)",
+        year: 2024,
+        framed: false,
+        signed: false,
+        description:
+          "A futuristic reimagination of Bharat blending mythology with sci-fi aesthetics.",
       },
       {
         id: "art-004",
         title: "Future Devi",
         image: "/art4.jpg",
-        price: 12000,
+        price: 11000,
+        originalPrice: 12000,
+        category: "Digital Art",
+        medium: "Concept Art",
+        dimensions: "4K Resolution",
+        year: 2024,
+        framed: false,
+        signed: true,
+        description:
+          "A powerful depiction of a modern divine feminine figure in a futuristic Indian setting.",
+      },
+    ],
+
+    reviews: [
+      {
+        id: "rev-003",
+        name: "Arjun",
+        rating: 5,
+        comment: "Creative and futuristic designs. Highly recommended!",
       },
     ],
   },

@@ -1,5 +1,7 @@
 import { artists } from "@/app/data/artists";
 import { notFound } from "next/navigation";
+import ReviewSection from "./ReviewSection";
+import Link from "next/link";
 
 export default async function ArtistProfile({
   params,
@@ -17,7 +19,6 @@ export default async function ArtistProfile({
     <main className="min-h-screen bg-black text-white px-16 py-20">
       <div className="max-w-5xl mx-auto">
 
-        {/* Profile Header */}
         <div className="flex items-center gap-8 mb-12">
           <img
             src={artist.profileImage}
@@ -47,92 +48,36 @@ export default async function ArtistProfile({
           </div>
         </div>
 
-        {/* Specialties */}
-        <div className="mb-12">
-          <h2 className="text-xl text-yellow-500 mb-4">
-            Specialties
+        {/* Artworks */}
+        <div className="mb-16">
+          <h2 className="text-2xl text-yellow-500 mb-8">
+            Artworks
           </h2>
 
-          <div className="flex flex-wrap gap-3">
-            {artist.specialties.map((spec, index) => (
-              <span
-                key={index}
-                className="border border-yellow-600/30 px-4 py-2 rounded-full text-sm text-gray-300"
+          <div className="grid md:grid-cols-3 gap-8">
+            {artist.artworks?.map((art) => (
+              <Link
+                key={art.id}
+                href={`/artwork/${art.id}`}
+                className="border border-yellow-600/20 rounded-lg p-4 block hover:border-yellow-500/40 transition"
               >
-                {spec}
-              </span>
+                <img
+                  src={art.image}
+                  className="w-full h-48 object-cover rounded-md mb-4"
+                />
+                <h3 className="text-yellow-500 mb-2">
+                  {art.title}
+                </h3>
+                <p className="text-gray-400">
+                  ₹ {art.price}
+                </p>
+              </Link>
             ))}
           </div>
         </div>
 
-        {/* Social */}
-        <div className="mb-12">
-          <h2 className="text-xl text-yellow-500 mb-4">
-            Social
-          </h2>
-
-          <p className="text-gray-400">
-            Instagram: {artist.social.instagram}
-          </p>
-
-          <p className="text-gray-400">
-            Website: {artist.social.website}
-          </p>
-        </div>
-
-        {/* Artworks Section */}
-        {artist.artworks && (
-          <div className="mb-16">
-            <h2 className="text-2xl text-yellow-500 mb-8">
-              Artworks by {artist.name}
-            </h2>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {artist.artworks.map((art) => (
-                <div
-                  key={art.id}
-                  className="border border-yellow-600/20 rounded-lg p-4 hover:border-yellow-500/40 transition"
-                >
-                  <img
-                    src={art.image}
-                    className="w-full h-48 object-cover rounded-md mb-4"
-                  />
-
-                  <h3 className="text-yellow-500 mb-2">
-                    {art.title}
-                  </h3>
-
-                  <p className="text-gray-400 mb-4">
-                    ₹ {art.price}
-                  </p>
-
-                  <button className="bg-yellow-500 text-black px-4 py-2 rounded-md hover:bg-yellow-400 transition">
-                    View Details
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Contact Section */}
-        <div className="border-t border-yellow-600/20 pt-8">
-          <h3 className="text-yellow-500 text-xl mb-6">
-            Contact Artist
-          </h3>
-
-          <p className="text-gray-400 mb-2">
-            📞 {artist.phone}
-          </p>
-
-          <a
-            href={`https://wa.me/${artist.phone}`}
-            target="_blank"
-            className="inline-block bg-yellow-500 text-black px-6 py-3 rounded-md font-medium hover:bg-yellow-400 transition"
-          >
-            Request Custom Artwork
-          </a>
-        </div>
+        {/* Reviews */}
+        <ReviewSection initialReviews={artist.reviews || []} />
 
       </div>
     </main>
