@@ -1,130 +1,140 @@
+import { artists } from "@/app/data/artists";
 import { notFound } from "next/navigation";
-import { artists } from "../../data/artists";
-import { artworks } from "../../data/artworks";
-import Link from "next/link";
 
-export default async function ArtistPage({
+export default async function ArtistProfile({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
   const artist = artists.find((a) => a.id === id);
 
-  if (!artist) return notFound();
-
-  // 🔥 Get all artworks of this artist
-  const artistWorks = artworks.filter(
-    (art) => art.artist.id === artist.id
-  );
+  if (!artist) {
+    return notFound();
+  }
 
   return (
-    <div className="min-h-screen bg-black text-white px-6 md:px-20 py-20">
+    <main className="min-h-screen bg-black text-white px-16 py-20">
+      <div className="max-w-5xl mx-auto">
 
-      {/* ===== ARTIST HEADER ===== */}
-      <div className="flex flex-col md:flex-row gap-12 items-center md:items-start">
+        {/* Profile Header */}
+        <div className="flex items-center gap-8 mb-12">
+          <img
+            src={artist.profileImage}
+            className="w-40 h-40 rounded-full border-4 border-yellow-600 object-cover"
+          />
 
-        <img
-          src={artist.profileImage}
-          alt={artist.name}
-          className="w-56 h-56 object-cover rounded-full border-4 border-yellow-500 shadow-xl"
-        />
+          <div>
+            <h1 className="text-3xl text-yellow-500 mb-2">
+              {artist.name}
+            </h1>
 
-        <div className="max-w-2xl">
+            <p className="text-gray-400 mb-4">
+              {artist.bio}
+            </p>
 
-          <h1 className="text-5xl font-light text-yellow-500 tracking-widest">
-            {artist.name}
-          </h1>
+            <p className="text-sm text-gray-500 mb-2">
+              ⭐ {artist.rating} • 📍 {artist.location}
+            </p>
 
-          <p className="mt-6 text-gray-400 leading-relaxed text-lg">
-            {artist.bio}
+            <p className="text-sm text-gray-400">
+              🎨 {artist.experience} Experience
+            </p>
+
+            <p className="text-sm text-gray-400">
+              🛍 {artist.totalSales} Sales • 👥 {artist.followers} Followers
+            </p>
+          </div>
+        </div>
+
+        {/* Specialties */}
+        <div className="mb-12">
+          <h2 className="text-xl text-yellow-500 mb-4">
+            Specialties
+          </h2>
+
+          <div className="flex flex-wrap gap-3">
+            {artist.specialties.map((spec, index) => (
+              <span
+                key={index}
+                className="border border-yellow-600/30 px-4 py-2 rounded-full text-sm text-gray-300"
+              >
+                {spec}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Social */}
+        <div className="mb-12">
+          <h2 className="text-xl text-yellow-500 mb-4">
+            Social
+          </h2>
+
+          <p className="text-gray-400">
+            Instagram: {artist.social.instagram}
           </p>
 
-          <div className="mt-8 grid grid-cols-2 gap-6 text-sm text-gray-300">
+          <p className="text-gray-400">
+            Website: {artist.social.website}
+          </p>
+        </div>
 
-            <div>
-              <p className="text-yellow-500">Location</p>
-              <p>{artist.location}</p>
-            </div>
+        {/* Artworks Section */}
+        {artist.artworks && (
+          <div className="mb-16">
+            <h2 className="text-2xl text-yellow-500 mb-8">
+              Artworks by {artist.name}
+            </h2>
 
-            <div>
-              <p className="text-yellow-500">Experience</p>
-              <p>{artist.experience}</p>
-            </div>
-
-            <div>
-              <p className="text-yellow-500">Rating</p>
-              <p>⭐ {artist.rating}</p>
-            </div>
-
-            <div>
-              <p className="text-yellow-500">Total Sales</p>
-              <p>{artist.totalSales}</p>
-            </div>
-
-            <div>
-              <p className="text-yellow-500">Followers</p>
-              <p>{artist.followers}</p>
-            </div>
-
-          </div>
-
-          <div className="mt-10">
-            <h3 className="text-yellow-500 tracking-widest mb-4">
-              SPECIALTIES
-            </h3>
-
-            <div className="flex flex-wrap gap-3">
-              {artist.specialties.map((skill, index) => (
-                <span
-                  key={index}
-                  className="border border-yellow-600/30 px-4 py-2 text-sm rounded-full text-gray-300"
+            <div className="grid md:grid-cols-3 gap-8">
+              {artist.artworks.map((art) => (
+                <div
+                  key={art.id}
+                  className="border border-yellow-600/20 rounded-lg p-4 hover:border-yellow-500/40 transition"
                 >
-                  {skill}
-                </span>
+                  <img
+                    src={art.image}
+                    className="w-full h-48 object-cover rounded-md mb-4"
+                  />
+
+                  <h3 className="text-yellow-500 mb-2">
+                    {art.title}
+                  </h3>
+
+                  <p className="text-gray-400 mb-4">
+                    ₹ {art.price}
+                  </p>
+
+                  <button className="bg-yellow-500 text-black px-4 py-2 rounded-md hover:bg-yellow-400 transition">
+                    View Details
+                  </button>
+                </div>
               ))}
             </div>
           </div>
+        )}
 
-        </div>
-      </div>
+        {/* Contact Section */}
+        <div className="border-t border-yellow-600/20 pt-8">
+          <h3 className="text-yellow-500 text-xl mb-6">
+            Contact Artist
+          </h3>
 
-      {/* ===== ARTWORKS SECTION ===== */}
-      <div className="mt-24">
+          <p className="text-gray-400 mb-2">
+            📞 {artist.phone}
+          </p>
 
-        <h2 className="text-3xl text-yellow-500 tracking-widest mb-12">
-          ARTWORKS BY {artist.name.toUpperCase()}
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-10">
-
-          {artistWorks.map((art) => (
-            <Link key={art.id} href={`/explore/${art.slug}`}>
-              <div className="border border-yellow-600/20 hover:border-yellow-500 transition duration-300 p-4 cursor-pointer">
-
-                <img
-                  src={art.thumbnail}
-                  alt={art.title}
-                  className="w-full h-64 object-cover mb-4"
-                />
-
-                <h3 className="text-lg text-yellow-500 tracking-wide">
-                  {art.title}
-                </h3>
-
-                <p className="text-gray-400 text-sm mt-2">
-                  ₹ {art.pricing.amount.toLocaleString()}
-                </p>
-
-              </div>
-            </Link>
-          ))}
-
+          <a
+            href={`https://wa.me/${artist.phone}`}
+            target="_blank"
+            className="inline-block bg-yellow-500 text-black px-6 py-3 rounded-md font-medium hover:bg-yellow-400 transition"
+          >
+            Request Custom Artwork
+          </a>
         </div>
 
       </div>
-
-    </div>
+    </main>
   );
 }
