@@ -1,39 +1,33 @@
 "use client";
 
-import Link from "next/link";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
-export default function OrderSuccessPage() {
-  const params = useSearchParams();
+function OrderContent() {
+  const searchParams = useSearchParams();
 
-  const orderId = params.get("orderId");
-  const total = params.get("total");
+  const orderId = searchParams.get("orderId");
+  const total = searchParams.get("total");
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+    <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+      <div className="text-center max-w-lg">
 
-      <div className="max-w-xl text-center">
-
-        <h1 className="text-4xl font-bold text-yellow-500 mb-6">
+        <h1 className="text-4xl text-yellow-500 mb-6">
           Order Confirmed 🎉
         </h1>
 
-        <p className="text-gray-400 mb-4">
+        <p className="text-gray-400 mb-6">
           Thank you for purchasing from Kala Setu.
         </p>
 
-        <p className="text-lg mb-2">
-          Order ID:
-          <span className="text-yellow-500 ml-2">
-            {orderId}
-          </span>
+        <p className="mb-2">
+          Order ID: <span className="text-yellow-500">{orderId}</span>
         </p>
 
-        <p className="text-lg mb-8">
-          Total Paid:
-          <span className="text-yellow-500 ml-2">
-            ₹{total}
-          </span>
+        <p className="mb-8">
+          Total Paid: <span className="text-yellow-500">₹{total}</span>
         </p>
 
         <p className="text-gray-400 mb-10">
@@ -48,7 +42,14 @@ export default function OrderSuccessPage() {
         </Link>
 
       </div>
+    </main>
+  );
+}
 
-    </div>
+export default function OrderSuccessPage() {
+  return (
+    <Suspense fallback={<div className="text-white p-10">Loading...</div>}>
+      <OrderContent />
+    </Suspense>
   );
 }
