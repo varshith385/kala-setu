@@ -144,10 +144,68 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <CartProvider>
-          <Navbar />
-          {children}
-          <CartDrawer />
-        </CartProvider>
+  <Navbar />
+
+  {children}
+
+  {/* LUXURY FOOTER */}
+  <footer className="border-t border-yellow-600/20 bg-black text-white mt-24">
+    <div className="max-w-7xl mx-auto px-6 md:px-16 py-16 grid md:grid-cols-4 gap-12">
+
+      {/* Brand */}
+      <div>
+        <h2 className="text-2xl text-yellow-500 tracking-widest mb-4">
+          KALA SETU
+        </h2>
+        <p className="text-gray-400 text-sm leading-relaxed">
+          Connecting collectors with India's finest physical and digital artists.
+          Discover curated artworks and commission custom pieces directly from creators.
+        </p>
+      </div>
+
+      {/* Marketplace */}
+      <div>
+        <h3 className="text-yellow-500 mb-4">Marketplace</h3>
+        <ul className="space-y-2 text-gray-400 text-sm">
+          <li><Link href="/explore">Explore Art</Link></li>
+          <li><Link href="/artists">Artists</Link></li>
+          <li><Link href="/custom-request">Custom Artwork</Link></li>
+          <li><Link href="/cart">Cart</Link></li>
+        </ul>
+      </div>
+
+      {/* For Artists */}
+      <div>
+        <h3 className="text-yellow-500 mb-4">For Artists</h3>
+        <ul className="space-y-2 text-gray-400 text-sm">
+          <li>Join Kala Setu</li>
+          <li>Sell Your Art</li>
+          <li>Artist Guidelines</li>
+          <li>Commission Requests</li>
+        </ul>
+      </div>
+
+      {/* Social */}
+      <div>
+        <h3 className="text-yellow-500 mb-4">Follow Us</h3>
+        <ul className="space-y-2 text-gray-400 text-sm">
+          <li>Instagram</li>
+          <li>Twitter</li>
+          <li>LinkedIn</li>
+          <li>YouTube</li>
+        </ul>
+      </div>
+
+    </div>
+
+    {/* Bottom copyright */}
+    <div className="border-t border-yellow-600/20 text-center text-gray-500 text-sm py-6">
+      © 2026 Kala Setu. All rights reserved.
+    </div>
+  </footer>
+
+  <CartDrawer />
+</CartProvider>
       </body>
     </html>
   );
