@@ -33,6 +33,14 @@ function Navbar() {
         >
           Explore
         </Link>
+	
+	{/* Custom Artwork */}
+<Link
+  href="/custom-request"
+  className="hover:text-yellow-500 transition"
+>
+  Custom Artwork
+</Link>
 
         {/* Artists Section */}
         <div
