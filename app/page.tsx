@@ -70,6 +70,26 @@ export default function Home() {
       {/* NEW ARRIVALS */}
       <ArtworkSection title="New Arrivals" data={newArrivals} />
 
+      {/* CUSTOM ART SECTION */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold mb-4 text-black">
+            Want a Custom Artwork?
+          </h2>
+
+          <p className="text-gray-600 mb-6">
+            Connect directly with our talented artists and get personalized art made just for you.
+          </p>
+
+          <Link
+            href="/artists"
+            className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition"
+          >
+            Explore Artists
+          </Link>
+        </div>
+      </section>
+
     </main>
   );
 }
@@ -169,22 +189,3 @@ function ArtworkSection({
     </section>
   );
 }
-
-{/* Custom Art Section */}
-<section className="py-16 bg-gray-50">
-  <div className="max-w-6xl mx-auto px-6 text-center">
-    <h2 className="text-3xl font-bold mb-4">
-      Want a Custom Artwork?
-    </h2>
-    <p className="text-gray-600 mb-6">
-      Connect directly with our talented artists and get personalized art made just for you.
-    </p>
-
-    <Link
-      href="/artists"
-      className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition"
-    >
-      Explore Artists
-    </Link>
-  </div>
-</section>
