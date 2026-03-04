@@ -1,13 +1,17 @@
+"use client";
+
 import { artists } from "@/app/data/artists";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { use } from "react";
 
-export default async function ArtworkPage({
+export default function ArtworkPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+
+  const { id } = use(params);
 
   let artwork: any = null;
   let artistName = "";
@@ -22,6 +26,21 @@ export default async function ArtworkPage({
   }
 
   if (!artwork) return notFound();
+
+  const addToCart = () => {
+    const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    existingCart.push({
+      id: artwork.id,
+      title: artwork.title,
+      price: artwork.price,
+      image: artwork.image,
+    });
+
+    localStorage.setItem("cart", JSON.stringify(existingCart));
+
+    alert("Added to cart!");
+  };
 
   return (
     <main className="min-h-screen bg-black text-white px-16 py-20">
@@ -86,7 +105,10 @@ export default async function ArtworkPage({
           </div>
 
           {/* Add to Cart */}
-          <button className="border border-yellow-500 text-yellow-500 px-8 py-3 rounded-md hover:bg-yellow-500 hover:text-black transition">
+          <button
+            onClick={addToCart}
+            className="border border-yellow-500 text-yellow-500 px-8 py-3 rounded-md hover:bg-yellow-500 hover:text-black transition"
+          >
             Add to Cart
           </button>
 

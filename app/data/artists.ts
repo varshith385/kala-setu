@@ -20,6 +20,7 @@ export const artists = [
     artworks: [
       {
         id: "art-001",
+        slug: "golden-heritage",
         title: "Golden Heritage",
         image: "/art1.jpg",
         price: 13500,
@@ -35,6 +36,7 @@ export const artists = [
       },
       {
         id: "art-002",
+        slug: "royal-essence",
         title: "Royal Essence",
         image: "/art2.jpg",
         price: 22000,
@@ -87,6 +89,7 @@ export const artists = [
     artworks: [
       {
         id: "art-003",
+        slug: "neo-bharat",
         title: "Neo Bharat",
         image: "/art3.jpg",
         price: 7500,
@@ -102,6 +105,7 @@ export const artists = [
       },
       {
         id: "art-004",
+        slug: "future-devi",
         title: "Future Devi",
         image: "/art4.jpg",
         price: 11000,

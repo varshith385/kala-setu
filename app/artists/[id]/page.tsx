@@ -58,7 +58,7 @@ export default async function ArtistProfile({
             {artist.artworks?.map((art) => (
               <Link
                 key={art.id}
-                href={`/artwork/${art.id}`}
+                href={`/explore/${art.slug}`}
                 className="border border-yellow-600/20 rounded-lg p-4 block hover:border-yellow-500/40 transition"
               >
                 <img
@@ -78,6 +78,29 @@ export default async function ArtistProfile({
 
         {/* Reviews */}
         <ReviewSection initialReviews={artist.reviews || []} />
+
+	{/* Contact Artist */}
+<div className="border-t border-yellow-600/20 pt-10 mt-16">
+  <h3 className="text-yellow-500 text-xl mb-6">
+    Contact Artist for Custom Artwork
+  </h3>
+
+  <p className="text-gray-400 mb-2">
+    📍 {artist.location}
+  </p>
+
+  <p className="text-gray-400 mb-2">
+    📞 {artist.phone}
+  </p>
+
+  <a
+    href={`https://wa.me/${artist.phone}`}
+    target="_blank"
+    className="inline-block bg-yellow-500 text-black px-6 py-3 rounded-md font-medium hover:bg-yellow-400 transition mt-4"
+  >
+    Request Custom Artwork on WhatsApp
+  </a>
+</div>
 
       </div>
     </main>
