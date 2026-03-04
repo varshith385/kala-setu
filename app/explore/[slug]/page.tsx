@@ -1,13 +1,15 @@
+export const dynamicParams = true;
+
 import { artworks } from "../../data/artworks";
 import { notFound } from "next/navigation";
 import ArtworkClient from "./ArtworkClient";
 
-export default async function ArtworkDetail({
+export default function ArtworkDetail({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const { slug } = await params;
+  const { slug } = params;
 
   const artwork = artworks.find((art) => art.slug === slug);
 
