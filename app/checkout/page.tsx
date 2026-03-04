@@ -22,16 +22,14 @@ export default function CheckoutPage() {
       alert("Please fill all customer details");
       return;
     }
+   
+  const orderId = "KS" + Math.floor(Math.random() * 100000);
 
-    alert("Payment Successful (Demo)");
+  alert("Payment Successful (Demo)");
 
-    console.log("Order Details:", {
-      customer,
-      cart,
-      total,
-    });
+  clearCart();
 
-    clearCart();
+  window.location.href = `/order-success?orderId=${orderId}&total=${total}`;
   };
 
   return (
