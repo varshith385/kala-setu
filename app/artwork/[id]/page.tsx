@@ -4,6 +4,8 @@ import { artists } from "@/app/data/artists";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { use } from "react";
+import { useCart } from "../../context/CartContext";
+import { useRouter } from "next/navigation";
 
 export default function ArtworkPage({
   params,
@@ -12,6 +14,8 @@ export default function ArtworkPage({
 }) {
 
   const { id } = use(params);
+  const { addToCart } = useCart();
+  const router = useRouter();
 
   let artwork: any = null;
   let artistName = "";
@@ -27,19 +31,17 @@ export default function ArtworkPage({
 
   if (!artwork) return notFound();
 
-  const addToCart = () => {
-    const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-    existingCart.push({
+  const handleAddToCart = () => {
+    addToCart({
       id: artwork.id,
       title: artwork.title,
-      price: artwork.price,
-      image: artwork.image,
+      pricing: {
+        amount: artwork.price,
+      },
+      quantity: 1,
     });
 
-    localStorage.setItem("cart", JSON.stringify(existingCart));
-
-    alert("Added to cart!");
+    router.push("/cart");
   };
 
   return (
@@ -73,7 +75,7 @@ export default function ArtworkPage({
 
           {/* Price */}
           <div className="mb-6">
-            {artwork.originalPrice && (
+            {artwork.originalPrice && artwork.originalPrice !== artwork.price && (
               <p className="text-gray-500 line-through">
                 ₹ {artwork.originalPrice}
               </p>
@@ -106,14 +108,13 @@ export default function ArtworkPage({
 
           {/* Add to Cart */}
           <button
-            onClick={addToCart}
+            onClick={handleAddToCart}
             className="border border-yellow-500 text-yellow-500 px-8 py-3 rounded-md hover:bg-yellow-500 hover:text-black transition"
           >
             Add to Cart
           </button>
 
         </div>
-
       </div>
     </main>
   );

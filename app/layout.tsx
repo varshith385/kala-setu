@@ -3,12 +3,27 @@
 import "./globals.css";
 import Link from "next/link";
 import { useState } from "react";
+import { Playfair_Display, Inter } from "next/font/google";
 import { CartProvider, useCart } from "./context/CartContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import CartDrawer from "./components/CartDrawer";
 import { artists } from "./data/artists";
 
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-playfair",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-inter",
+});
+
 function Navbar() {
   const { cart, openCart } = useCart();
+  const { user, signOut } = useAuth();
   const [artistOpen, setArtistOpen] = useState(false);
 
   const totalItems = cart.reduce(
@@ -20,7 +35,7 @@ function Navbar() {
     <nav className="flex justify-between items-center px-16 py-6 border-b border-yellow-600/20 bg-black text-white relative">
 
       {/* Logo */}
-      <Link href="/" className="text-2xl text-yellow-500 tracking-widest">
+      <Link href="/" className="font-display text-2xl text-yellow-500 tracking-widest">
         KALA SETU
       </Link>
 
@@ -116,6 +131,32 @@ function Navbar() {
           )}
         </div>
 
+        {/* Auth */}
+        {user ? (
+          <div className="flex items-center gap-4">
+            <Link
+              href="/orders"
+              className="hover:text-yellow-500 transition text-sm"
+            >
+              My Orders
+            </Link>
+            <span className="text-xs text-gray-400">{user.email}</span>
+            <button
+              onClick={() => signOut()}
+              className="hover:text-yellow-500 transition text-sm"
+            >
+              Log Out
+            </button>
+          </div>
+        ) : (
+          <Link
+            href="/login"
+            className="hover:text-yellow-500 transition"
+          >
+            Log In
+          </Link>
+        )}
+
         {/* Cart */}
         <button
           onClick={openCart}
@@ -141,8 +182,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body>
+        <AuthProvider>
         <CartProvider>
   <Navbar />
 
@@ -154,7 +196,7 @@ export default function RootLayout({
 
       {/* Brand */}
       <div>
-        <h2 className="text-2xl text-yellow-500 tracking-widest mb-4">
+        <h2 className="font-display text-2xl text-yellow-500 tracking-widest mb-4">
           KALA SETU
         </h2>
         <p className="text-gray-400 text-sm leading-relaxed">
@@ -206,6 +248,7 @@ export default function RootLayout({
 
   <CartDrawer />
 </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

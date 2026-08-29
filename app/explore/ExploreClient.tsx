@@ -13,6 +13,8 @@ export default function ExploreClient() {
 
   const [activeFilter, setActiveFilter] = useState<string | null>(typeFromUrl);
   const [sortOrder, setSortOrder] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [priceRange, setPriceRange] = useState("");
 
   useEffect(() => {
     setActiveFilter(typeFromUrl);
@@ -20,21 +22,41 @@ export default function ExploreClient() {
 
   let filtered = artworks;
 
-  /* ================= FILTER LOGIC ================= */
+  if (searchQuery.trim() !== "") {
+    const q = searchQuery.trim().toLowerCase();
+    filtered = filtered.filter(
+      (art) =>
+        art.title.toLowerCase().includes(q) ||
+        art.artist.name.toLowerCase().includes(q) ||
+        art.tags.some((tag) => tag.toLowerCase().includes(q))
+    );
+  }
 
   if (activeFilter === "physical") {
-    filtered = artworks.filter(
+    filtered = filtered.filter(
       (art) => art.details.category === "Physical Art"
     );
   }
 
   if (activeFilter === "digital") {
-    filtered = artworks.filter(
+    filtered = filtered.filter(
       (art) => art.details.category === "Digital Art"
     );
   }
 
-  /* ================= SORT LOGIC ================= */
+  if (priceRange === "under15") {
+    filtered = filtered.filter((art) => art.pricing.amount < 15000);
+  }
+
+  if (priceRange === "15to20") {
+    filtered = filtered.filter(
+      (art) => art.pricing.amount >= 15000 && art.pricing.amount <= 20000
+    );
+  }
+
+  if (priceRange === "above20") {
+    filtered = filtered.filter((art) => art.pricing.amount > 20000);
+  }
 
   if (sortOrder === "low") {
     filtered = [...filtered].sort(
@@ -48,8 +70,6 @@ export default function ExploreClient() {
     );
   }
 
-  /* ================= HANDLE FILTER CHANGE ================= */
-
   const handleFilterChange = (value: string | null) => {
     setActiveFilter(value);
 
@@ -60,107 +80,197 @@ export default function ExploreClient() {
     }
   };
 
+  const clearAll = () => {
+    setSearchQuery("");
+    setPriceRange("");
+    setSortOrder("");
+    handleFilterChange(null);
+  };
+
+  const hasActiveFilters =
+    searchQuery !== "" || priceRange !== "" || activeFilter !== null;
+
   return (
     <main className="min-h-screen bg-black text-white px-6 md:px-16 py-24">
 
       {/* HEADER */}
-      <div className="mb-12">
-        <h1 className="text-4xl text-yellow-500 mb-6">
-          Explore Collection
+      <div className="mb-14 max-w-6xl mx-auto">
+        <p className="uppercase tracking-[0.25em] text-xs text-yellow-500 mb-3 font-medium">
+          {artworks.length} Curated Pieces
+        </p>
+        <h1 className="font-display text-4xl md:text-5xl text-white mb-10">
+          Explore the <span className="text-yellow-500">Collection</span>
         </h1>
 
+        {/* SEARCH BAR */}
+        <div className="relative mb-6">
+          <span className="absolute left-5 top-1/2 -translate-y-1/2 text-yellow-500/70 text-lg">
+            ⌕
+          </span>
+          <input
+            type="text"
+            placeholder="Search by artwork, artist, or style..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-neutral-900 border border-yellow-600/40 focus:border-yellow-500 outline-none pl-12 pr-5 py-4 text-white placeholder-gray-400 rounded-lg transition text-base"
+          />
+        </div>
+
         {/* FILTER + SORT BAR */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6 border border-yellow-600/20 p-4 rounded-lg">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-5 border border-yellow-600/40 p-5 rounded-lg bg-neutral-900">
 
-          {/* FILTER BUTTONS */}
-          <div className="flex gap-4">
+          <div className="flex flex-wrap items-center gap-3">
 
-            <button
+            <FilterPill
+              active={!activeFilter}
               onClick={() => handleFilterChange(null)}
-              className={`px-4 py-2 border ${
-                !activeFilter
-                  ? "bg-yellow-600 text-black"
-                  : "border-yellow-600 text-yellow-500"
-              }`}
             >
               All
-            </button>
+            </FilterPill>
 
-            <button
+            <FilterPill
+              active={activeFilter === "physical"}
               onClick={() => handleFilterChange("physical")}
-              className={`px-4 py-2 border ${
-                activeFilter === "physical"
-                  ? "bg-yellow-600 text-black"
-                  : "border-yellow-600 text-yellow-500"
-              }`}
             >
               Physical
-            </button>
+            </FilterPill>
 
-            <button
+            <FilterPill
+              active={activeFilter === "digital"}
               onClick={() => handleFilterChange("digital")}
-              className={`px-4 py-2 border ${
-                activeFilter === "digital"
-                  ? "bg-yellow-600 text-black"
-                  : "border-yellow-600 text-yellow-500"
-              }`}
             >
               Digital
-            </button>
+            </FilterPill>
+
+            <select
+              value={priceRange}
+              onChange={(e) => setPriceRange(e.target.value)}
+              className="bg-black border border-yellow-600/50 text-yellow-400 px-4 py-2 rounded-md text-sm font-medium"
+            >
+              <option value="">All Prices</option>
+              <option value="under15">Under ₹15,000</option>
+              <option value="15to20">₹15,000 – ₹20,000</option>
+              <option value="above20">Above ₹20,000</option>
+            </select>
+
+            {hasActiveFilters && (
+              <button
+                onClick={clearAll}
+                className="text-gray-400 hover:text-yellow-400 text-sm underline transition"
+              >
+                Clear all
+              </button>
+            )}
 
           </div>
 
-          {/* SORT DROPDOWN */}
           <div className="flex items-center gap-4">
-
-            <span className="text-gray-400 text-sm">
-              {filtered.length} Results
+            <span className="text-gray-300 text-sm whitespace-nowrap font-medium">
+              {filtered.length} Result{filtered.length !== 1 ? "s" : ""}
             </span>
 
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="bg-black border border-yellow-600 text-yellow-500 px-4 py-2"
+              className="bg-black border border-yellow-600/50 text-yellow-400 px-4 py-2 rounded-md text-sm font-medium"
             >
               <option value="">Sort By</option>
               <option value="low">Price: Low → High</option>
               <option value="high">Price: High → Low</option>
             </select>
-
           </div>
 
         </div>
       </div>
 
       {/* GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {filtered.map((art) => (
-          <Link
-            key={art.id}
-            href={`/explore/${art.slug}`}
-            className="block border border-yellow-600/20 p-6 rounded-xl hover:border-yellow-500/50 hover:scale-[1.02] transition duration-500"
+      {filtered.length === 0 ? (
+        <div className="text-center py-24 max-w-md mx-auto">
+          <p className="text-5xl mb-4">🔍</p>
+          <p className="text-white text-lg mb-2 font-medium">No artworks found</p>
+          <p className="text-gray-400 text-sm mb-6">
+            Try a different keyword, or clear your filters to see everything.
+          </p>
+          <button
+            onClick={clearAll}
+            className="border border-yellow-500 text-yellow-400 px-6 py-2 hover:bg-yellow-500 hover:text-black transition font-medium"
           >
-            <img
-              src={art.images[0]}
-              alt={art.title}
-              className="h-60 w-full object-cover rounded mb-6"
-            />
+            Clear All Filters
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+          {filtered.map((art) => (
+            <Link
+              key={art.id}
+              href={`/explore/${art.slug}`}
+              className="group block bg-neutral-900 border border-yellow-600/30 rounded-xl overflow-hidden hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/10 transition duration-500"
+            >
+              <div className="relative overflow-hidden">
+                <img
+                  src={art.images[0]}
+                  alt={art.title}
+                  className="h-60 w-full object-cover transition duration-700 group-hover:scale-110"
+                />
+                {art.pricing.isOnSale && (
+                  <span className="absolute top-3 left-3 bg-yellow-500 text-black text-xs px-2 py-1 rounded font-bold">
+                    -{art.pricing.discountPercentage}%
+                  </span>
+                )}
+              </div>
 
-            <h3 className="text-yellow-500 text-lg mb-2">
-              {art.title}
-            </h3>
+              <div className="p-6">
+                <h3 className="font-display text-yellow-400 text-lg mb-1">
+                  {art.title}
+                </h3>
 
-            <p className="text-gray-400 mb-1">
-              ₹ {art.pricing.amount}
-            </p>
+                <p className="text-gray-400 text-xs mb-3">
+                  by {art.artist.name}
+                </p>
 
-            <p className="text-xs text-gray-500 uppercase">
-              {art.details.category}
-            </p>
-          </Link>
-        ))}
-      </div>
+                <p className="text-white mb-2 font-semibold text-lg">
+                  ₹ {art.pricing.amount.toLocaleString("en-IN")}
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-gray-400 uppercase font-medium">
+                    {art.details.category}
+                  </p>
+                  <p className="text-xs text-yellow-400 font-medium">
+                    ⭐ {art.engagement.rating}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
 
     </main>
+  );
+}
+
+/* ================= FILTER PILL ================= */
+
+function FilterPill({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 rounded-md text-sm transition font-medium ${
+        active
+          ? "bg-yellow-500 text-black"
+          : "border border-yellow-600/50 text-yellow-400 hover:bg-yellow-500/10"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

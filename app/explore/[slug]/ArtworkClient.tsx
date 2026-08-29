@@ -25,7 +25,7 @@ export default function ArtworkClient({ artwork }: any) {
             alt={artwork.title}
             width={800}
             height={600}
-            className="object-cover w-full border border-yellow-600/20"
+            className="object-cover w-full border border-yellow-600/30 rounded-lg"
           />
         </div>
 
@@ -33,19 +33,31 @@ export default function ArtworkClient({ artwork }: any) {
         <div>
 
           {/* TITLE */}
-          <h1 className="text-4xl text-yellow-500 mb-4">
+          <h1 className="font-display text-4xl text-yellow-500 mb-4">
             {artwork.title}
           </h1>
 
-          {/* ARTIST */}
-          <p className="text-gray-400 mb-6">
-            by{" "}
-            <Link
-              href={`/artists/${artwork.artist.id}`}
-              className="text-yellow-500 hover:underline"
-            >
-              {artwork.artist.name}
-            </Link>
+          {/* ARTIST + VERIFIED BADGE */}
+          <div className="flex items-center gap-2 mb-2">
+            <p className="text-gray-400">
+              by{" "}
+              <Link
+                href={`/artists/${artwork.artist.id}`}
+                className="text-yellow-500 hover:underline"
+              >
+                {artwork.artist.name}
+              </Link>
+            </p>
+            {artwork.artist.verified && (
+              <span className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/40 text-yellow-400 text-xs px-2 py-0.5 rounded-full font-medium">
+                ✓ Verified Artist
+              </span>
+            )}
+          </div>
+
+          {/* ARTIST CREDIBILITY LINE */}
+          <p className="text-gray-500 text-sm mb-6">
+            ⭐ {artwork.artist.rating} rating · {artwork.artist.totalSales} artworks sold
           </p>
 
           {/* PRICE */}
@@ -60,15 +72,47 @@ export default function ArtworkClient({ artwork }: any) {
             </p>
           </div>
 
+          {/* AUTHENTICITY STRIP */}
+          <div className="flex flex-wrap gap-3 mb-8">
+            {artwork.details.signed && (
+              <TrustBadge label="Hand-Signed" />
+            )}
+            {artwork.details.framed && (
+              <TrustBadge label="Framed" />
+            )}
+            {artwork.inventory?.limitedEdition ? (
+              <TrustBadge label="Limited Edition" />
+            ) : (
+              <TrustBadge label="One-of-a-Kind" />
+            )}
+          </div>
+
           {/* ART DETAILS */}
           <div className="space-y-2 text-gray-400 mb-8">
-            <p><strong>Category:</strong> {artwork.details.category}</p>
-            <p><strong>Medium:</strong> {artwork.details.medium}</p>
-            <p><strong>Dimensions:</strong> {artwork.details.dimensions}</p>
-            <p><strong>Year:</strong> {artwork.details.yearCreated}</p>
-            <p><strong>Framed:</strong> {artwork.details.framed ? "Yes" : "No"}</p>
-            <p><strong>Signed:</strong> {artwork.details.signed ? "Yes" : "No"}</p>
+            <p><strong className="text-gray-300">Category:</strong> {artwork.details.category}</p>
+            <p><strong className="text-gray-300">Medium:</strong> {artwork.details.medium}</p>
+            <p><strong className="text-gray-300">Dimensions:</strong> {artwork.details.dimensions}</p>
+            <p><strong className="text-gray-300">Year:</strong> {artwork.details.yearCreated}</p>
+            <p><strong className="text-gray-300">Framed:</strong> {artwork.details.framed ? "Yes" : "No"}</p>
+            <p><strong className="text-gray-300">Signed:</strong> {artwork.details.signed ? "Yes" : "No"}</p>
           </div>
+
+          {/* SHIPPING TRUST LINE */}
+          {artwork.shipping && (
+            <div className="border border-yellow-600/30 bg-neutral-900 rounded-lg p-4 mb-8 text-sm text-gray-300">
+              {artwork.shipping.freeShipping ? (
+                <p className="text-yellow-400 font-medium mb-1">✓ Free Shipping</p>
+              ) : (
+                <p className="text-gray-400 mb-1">Shipping charges apply</p>
+              )}
+              <p>
+                Ships from {artwork.shipping.shipsFrom}
+                {artwork.shipping.estimatedDeliveryDays > 0
+                  ? ` · Estimated delivery in ${artwork.shipping.estimatedDeliveryDays} days`
+                  : " · Instant digital delivery"}
+              </p>
+            </div>
+          )}
 
           {/* DESCRIPTION */}
           <p className="text-gray-300 mb-8 leading-relaxed">
@@ -105,5 +149,15 @@ export default function ArtworkClient({ artwork }: any) {
         </div>
       </div>
     </main>
+  );
+}
+
+/* ================= TRUST BADGE ================= */
+
+function TrustBadge({ label }: { label: string }) {
+  return (
+    <span className="text-xs px-3 py-1.5 border border-yellow-600/40 text-yellow-400 rounded-full bg-neutral-900">
+      {label}
+    </span>
   );
 }

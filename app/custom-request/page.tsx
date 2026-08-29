@@ -37,55 +37,72 @@ Can we discuss further?`;
     <main className="min-h-screen bg-black text-white px-6 py-20">
       <div className="max-w-2xl mx-auto">
 
-        <h1 className="text-4xl text-yellow-500 mb-10">
+        <p className="uppercase tracking-[0.25em] text-xs text-yellow-500/70 mb-3 text-center">
+          Made Just For You
+        </p>
+        <h1 className="font-display text-4xl text-yellow-500 mb-4 text-center">
           Request Custom Artwork
         </h1>
+        <p className="text-gray-400 text-center mb-12">
+          Tell us your idea, pick an artist, and we'll connect you directly on WhatsApp.
+        </p>
 
-        <div className="space-y-6">
+        <div className="bg-neutral-900 border border-yellow-600/30 rounded-xl p-8 space-y-6">
 
-          <input
-            placeholder="Your Name"
-            className="w-full bg-gray-900 border border-gray-700 px-4 py-3"
-            onChange={(e) =>
-              setForm({ ...form, name: e.target.value })
-            }
-          />
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">Your Name</label>
+            <input
+              placeholder="e.g. Priya Sharma"
+              className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white placeholder-gray-500"
+              onChange={(e) =>
+                setForm({ ...form, name: e.target.value })
+              }
+            />
+          </div>
 
-          <textarea
-            placeholder="Describe your custom artwork idea"
-            className="w-full bg-gray-900 border border-gray-700 px-4 py-3"
-            rows={4}
-            onChange={(e) =>
-              setForm({ ...form, idea: e.target.value })
-            }
-          />
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">Describe Your Idea</label>
+            <textarea
+              placeholder="What do you want the artwork to depict? Style, colors, mood..."
+              className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white placeholder-gray-500"
+              rows={4}
+              onChange={(e) =>
+                setForm({ ...form, idea: e.target.value })
+              }
+            />
+          </div>
 
-          <input
-            placeholder="Your Budget (₹)"
-            className="w-full bg-gray-900 border border-gray-700 px-4 py-3"
-            onChange={(e) =>
-              setForm({ ...form, budget: e.target.value })
-            }
-          />
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">Your Budget (₹)</label>
+            <input
+              placeholder="e.g. 15000"
+              className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white placeholder-gray-500"
+              onChange={(e) =>
+                setForm({ ...form, budget: e.target.value })
+              }
+            />
+          </div>
 
-          <select
-            className="w-full bg-gray-900 border border-gray-700 px-4 py-3"
-            onChange={(e) =>
-              setForm({ ...form, artistPhone: e.target.value })
-            }
-          >
-            <option>Select Artist</option>
-
-            {artists.map((artist) => (
-              <option key={artist.id} value={artist.phone}>
-                {artist.name}
-              </option>
-            ))}
-          </select>
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">Select Artist</label>
+            <select
+              className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
+              onChange={(e) =>
+                setForm({ ...form, artistPhone: e.target.value })
+              }
+            >
+              <option value="">Choose an artist...</option>
+              {artists.map((artist) => (
+                <option key={artist.id} value={artist.phone}>
+                  {artist.name} — {artist.specialties[0]}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <button
             onClick={handleSubmit}
-            className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-3 font-semibold transition"
+            className="w-full bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-3 font-semibold transition rounded-lg"
           >
             Contact Artist on WhatsApp
           </button>

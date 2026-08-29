@@ -1,0 +1,12 @@
+
+> kala-setu@0.1.0 dev
+> set NEXT_DISABLE_TURBOPACK=1 && next dev
+
+npm error code ENOENT
+npm error syscall spawn C:\Users\varsh\AppData\Local\Python\pythoncore-3.14-64\Scripts
+npm error path C:\Users\varsh\kala-setu
+npm error errno -4058
+npm error enoent spawn C:\Users\varsh\AppData\Local\Python\pythoncore-3.14-64\Scripts ENOENT
+npm error enoent This is related to npm not being able to find a file.
+npm error enoent
+npm error A complete log of this run can be found in: C:\Users\varsh\AppData\Local\npm-cache\_logs\2026-08-23T19_36_34_331Z-debug-0.log

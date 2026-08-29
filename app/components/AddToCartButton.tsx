@@ -1,25 +1,28 @@
 "use client";
 
+import { useCart } from "../context/CartContext";
+import { useRouter } from "next/navigation";
+
 export default function AddToCartButton({ artwork }: { artwork: any }) {
+  const { addToCart } = useCart();
+  const router = useRouter();
 
-  const addToCart = () => {
-    const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-    existingCart.push({
+  const handleAdd = () => {
+    addToCart({
       id: artwork.id,
       title: artwork.title,
-      price: artwork.price,
-      image: artwork.image,
+      pricing: {
+        amount: artwork.pricing?.amount ?? artwork.price,
+      },
+      quantity: 1,
     });
 
-    localStorage.setItem("cart", JSON.stringify(existingCart));
-
-    alert("Added to cart!");
+    router.push("/cart");
   };
 
   return (
     <button
-      onClick={addToCart}
+      onClick={handleAdd}
       className="border border-yellow-500 text-yellow-500 px-8 py-3 rounded-md hover:bg-yellow-500 hover:text-black transition"
     >
       Add to Cart

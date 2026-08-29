@@ -1,10 +1,22 @@
 "use client";
 
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "../lib/supabaseClient";
+import Link from "next/link";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
+  const { user } = useAuth();
+  const router = useRouter();
 
   const [customer, setCustomer] = useState({
     name: "",
@@ -12,29 +24,138 @@ export default function CheckoutPage() {
     address: "",
   });
 
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const total = cart.reduce(
     (sum, item) => sum + item.pricing.amount * item.quantity,
     0
   );
 
-  const handlePayment = () => {
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePayment = async () => {
+    if (!user) {
+      alert("Please log in to place an order.");
+      router.push("/login");
+      return;
+    }
+
     if (!customer.name || !customer.phone || !customer.address) {
       alert("Please fill all customer details");
       return;
     }
-   
-  const orderId = "KS" + Math.floor(Math.random() * 100000);
 
-  alert("Payment Successful (Demo)");
+    setIsProcessing(true);
 
-  clearCart();
+    try {
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        alert("Could not load payment gateway. Please check your internet connection.");
+        setIsProcessing(false);
+        return;
+      }
 
-  window.location.href = `/order-success?orderId=${orderId}&total=${total}`;
+      const res = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: total }),
+      });
+
+      const order = await res.json();
+
+      if (!order.id) {
+        alert("Could not start payment. Please try again.");
+        setIsProcessing(false);
+        return;
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "Kala Setu",
+        description: "Artwork Purchase",
+        order_id: order.id,
+        handler: async function (response: any) {
+          const orderRef = "KS" + Math.floor(Math.random() * 100000);
+
+          const { error } = await supabase.from("orders").insert({
+            user_id: user.id,
+            order_ref: orderRef,
+            items: cart,
+            total: total,
+            customer_name: customer.name,
+            customer_phone: customer.phone,
+            customer_address: customer.address,
+            payment_id: response.razorpay_payment_id,
+          });
+
+          if (error) {
+            console.error("Failed to save order:", error);
+          }
+
+          clearCart();
+          router.push(
+            `/order-success?orderId=${orderRef}&total=${total}&paymentId=${response.razorpay_payment_id}`
+          );
+        },
+        prefill: {
+          name: customer.name,
+          contact: customer.phone,
+        },
+        notes: {
+          address: customer.address,
+        },
+        theme: {
+          color: "#EAB308",
+        },
+        modal: {
+          ondismiss: function () {
+            setIsProcessing(false);
+          },
+        },
+      };
+
+      const razorpayInstance = new window.Razorpay(options);
+      razorpayInstance.open();
+    } catch (error) {
+      console.error("Payment error:", error);
+      alert("Something went wrong. Please try again.");
+      setIsProcessing(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-black text-white px-6 py-20">
-      <h1 className="text-4xl font-bold mb-12">Checkout</h1>
+      <h1 className="font-display text-4xl font-bold mb-12">Checkout</h1>
+
+      {!user && (
+        <div className="bg-neutral-900 border border-yellow-600/40 rounded-lg p-4 mb-10 max-w-2xl">
+          <p className="text-gray-300 text-sm">
+            You need to be logged in to complete a purchase.{" "}
+            <Link href="/login" className="text-yellow-500 hover:underline">
+              Log in
+            </Link>{" "}
+            or{" "}
+            <Link href="/signup" className="text-yellow-500 hover:underline">
+              create an account
+            </Link>
+            .
+          </p>
+        </div>
+      )}
 
       {cart.length === 0 ? (
         <p className="text-gray-400">Your cart is empty.</p>
@@ -107,10 +228,12 @@ export default function CheckoutPage() {
 
             <button
               onClick={handlePayment}
-              className="w-full bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-3 font-semibold transition"
+              disabled={isProcessing}
+              className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-gray-700 disabled:cursor-not-allowed text-black px-8 py-3 font-semibold transition"
             >
-              Pay Now
+              {isProcessing ? "Processing..." : "Pay Now"}
             </button>
+
           </div>
 
         </div>
