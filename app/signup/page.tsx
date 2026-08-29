@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
+import { supabase } from "../lib/supabaseClient";
 
 export default function SignupPage() {
   const { signUp } = useAuth();
@@ -11,6 +12,7 @@ export default function SignupPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"buyer" | "artist">("buyer");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -35,6 +37,20 @@ export default function SignupPage() {
       setError(error);
       setLoading(false);
       return;
+    }
+
+    // Update the profile role if they chose "artist"
+    // (the trigger already created a 'buyer' row, so we update it if needed)
+    if (role === "artist") {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData?.session?.user?.id;
+
+      if (userId) {
+        await supabase
+          .from("profiles")
+          .update({ role: "artist" })
+          .eq("id", userId);
+      }
     }
 
     setSuccess(true);
@@ -66,6 +82,37 @@ export default function SignupPage() {
           </div>
         ) : (
           <>
+            {/* ROLE SELECTOR */}
+            <div className="mb-6">
+              <label className="text-gray-400 text-sm mb-3 block text-center">
+                I am joining as a...
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRole("buyer")}
+                  className={`py-3 rounded-lg text-sm font-medium transition border ${
+                    role === "buyer"
+                      ? "bg-yellow-500 text-black border-yellow-500"
+                      : "border-yellow-600/40 text-yellow-400 hover:bg-yellow-500/10"
+                  }`}
+                >
+                  Buyer / Collector
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole("artist")}
+                  className={`py-3 rounded-lg text-sm font-medium transition border ${
+                    role === "artist"
+                      ? "bg-yellow-500 text-black border-yellow-500"
+                      : "border-yellow-600/40 text-yellow-400 hover:bg-yellow-500/10"
+                  }`}
+                >
+                  Artist
+                </button>
+              </div>
+            </div>
+
             <div className="space-y-5">
               <input
                 type="email"

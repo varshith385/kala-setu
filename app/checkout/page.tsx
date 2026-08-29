@@ -25,6 +25,7 @@ export default function CheckoutPage() {
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const total = cart.reduce(
     (sum, item) => sum + item.pricing.amount * item.quantity,
@@ -46,14 +47,15 @@ export default function CheckoutPage() {
   };
 
   const handlePayment = async () => {
+    setErrorMessage("");
+
     if (!user) {
-      alert("Please log in to place an order.");
-      router.push("/login");
+      setErrorMessage("Please log in to place an order.");
       return;
     }
 
     if (!customer.name || !customer.phone || !customer.address) {
-      alert("Please fill all customer details");
+      setErrorMessage("Please fill in all customer details before proceeding.");
       return;
     }
 
@@ -62,7 +64,7 @@ export default function CheckoutPage() {
     try {
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
-        alert("Could not load payment gateway. Please check your internet connection.");
+        setErrorMessage("Could not load the payment gateway. Please check your internet connection and try again.");
         setIsProcessing(false);
         return;
       }
@@ -76,7 +78,7 @@ export default function CheckoutPage() {
       const order = await res.json();
 
       if (!order.id) {
-        alert("Could not start payment. Please try again.");
+        setErrorMessage("Could not start your payment. Please try again in a moment.");
         setIsProcessing(false);
         return;
       }
@@ -129,10 +131,16 @@ export default function CheckoutPage() {
       };
 
       const razorpayInstance = new window.Razorpay(options);
+
+      razorpayInstance.on("payment.failed", function () {
+        setErrorMessage("Payment failed. Please check your card details and try again.");
+        setIsProcessing(false);
+      });
+
       razorpayInstance.open();
     } catch (error) {
       console.error("Payment error:", error);
-      alert("Something went wrong. Please try again.");
+      setErrorMessage("Something went wrong on our end. Please try again.");
       setIsProcessing(false);
     }
   };
@@ -142,7 +150,7 @@ export default function CheckoutPage() {
       <h1 className="font-display text-4xl font-bold mb-12">Checkout</h1>
 
       {!user && (
-        <div className="bg-neutral-900 border border-yellow-600/40 rounded-lg p-4 mb-10 max-w-2xl">
+        <div className="bg-neutral-900 border border-yellow-600/40 rounded-lg p-4 mb-6 max-w-2xl">
           <p className="text-gray-300 text-sm">
             You need to be logged in to complete a purchase.{" "}
             <Link href="/login" className="text-yellow-500 hover:underline">
@@ -154,6 +162,12 @@ export default function CheckoutPage() {
             </Link>
             .
           </p>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="bg-red-950/40 border border-red-500/40 rounded-lg p-4 mb-10 max-w-2xl">
+          <p className="text-red-300 text-sm">{errorMessage}</p>
         </div>
       )}
 
