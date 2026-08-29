@@ -30,7 +30,7 @@ Can we discuss further?`;
       message
     )}`;
 
-    window.open(url, "_blank");
+    window.location.href = url;
   };
 
   return (
