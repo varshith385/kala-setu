@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { artworks } from "../data/artworks";
+import WishlistButton from "../components/WishlistButton";
 
 export default function ExploreClient() {
   const searchParams = useSearchParams();
@@ -208,6 +209,7 @@ export default function ExploreClient() {
                     -{art.pricing.discountPercentage}%
                   </span>
                 )}
+                <WishlistButton artworkId={art.id} />
               </div>
 
               <div className="p-3 md:p-6">

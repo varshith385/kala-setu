@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Playfair_Display, Inter } from "next/font/google";
 import { CartProvider, useCart } from "./context/CartContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import CartDrawer from "./components/CartDrawer";
 import { artists } from "./data/artists";
 
@@ -46,6 +47,10 @@ function Navbar() {
 
             <Link href="/custom-request" className="hover:text-yellow-500 transition">
               Custom Artwork
+            </Link>
+
+            <Link href="/wishlist" className="hover:text-yellow-500 transition">
+              Wishlist
             </Link>
 
             <div
@@ -179,6 +184,9 @@ function Navbar() {
           <Link href="/custom-request" onClick={() => setMobileOpen(false)} className="block hover:text-yellow-500 transition">
             Custom Artwork
           </Link>
+          <Link href="/wishlist" onClick={() => setMobileOpen(false)} className="block hover:text-yellow-500 transition">
+            Wishlist
+          </Link>
           <Link href="/artists" onClick={() => setMobileOpen(false)} className="block hover:text-yellow-500 transition">
             Artists
           </Link>
@@ -222,6 +230,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>
         <CartProvider>
+        <WishlistProvider>
   <Navbar />
 
   {children}
@@ -257,6 +266,7 @@ export default function RootLayout({
             <li><Link href="/explore">Explore Art</Link></li>
             <li><Link href="/artists">Artists</Link></li>
             <li><Link href="/custom-request">Custom Artwork</Link></li>
+            <li><Link href="/wishlist">Wishlist</Link></li>
             <li><Link href="/cart">Cart</Link></li>
           </ul>
         </div>
@@ -291,6 +301,7 @@ export default function RootLayout({
   </footer>
 
   <CartDrawer />
+</WishlistProvider>
 </CartProvider>
         </AuthProvider>
       </body>
