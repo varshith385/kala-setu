@@ -113,12 +113,7 @@ export default async function ArtistProfile({
           </div>
 
           
-            href={`https://wa.me/${artist.phone}`}
-            target="_blank"
-            className="inline-block bg-yellow-500 text-black px-5 md:px-6 py-2.5 md:py-3 rounded-md font-medium hover:bg-yellow-400 transition text-sm md:text-base"
-          >
-            Request Custom Artwork on WhatsApp
-          </a>
+           <a href={`https://wa.me/${artist.phone}`} target="_blank" className="inline-block bg-yellow-500 text-black px-5 md:px-6 py-2.5 md:py-3 rounded-md font-medium hover:bg-yellow-400 transition text-sm md:text-base">Request Custom Artwork on WhatsApp</a>
         </div>
 
       </div>
