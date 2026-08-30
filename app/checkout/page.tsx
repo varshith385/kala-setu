@@ -146,12 +146,12 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white px-6 py-20">
-      <h1 className="font-display text-4xl font-bold mb-12">Checkout</h1>
+    <div className="min-h-screen bg-black text-white px-5 md:px-6 py-12 md:py-20">
+      <h1 className="font-display text-3xl md:text-4xl font-bold mb-8 md:mb-12">Checkout</h1>
 
       {!user && (
         <div className="bg-neutral-900 border border-yellow-600/40 rounded-lg p-4 mb-6 max-w-2xl">
-          <p className="text-gray-300 text-sm">
+          <p className="text-gray-300 text-xs md:text-sm">
             You need to be logged in to complete a purchase.{" "}
             <Link href="/login" className="text-yellow-500 hover:underline">
               Log in
@@ -166,67 +166,27 @@ export default function CheckoutPage() {
       )}
 
       {errorMessage && (
-        <div className="bg-red-950/40 border border-red-500/40 rounded-lg p-4 mb-10 max-w-2xl">
-          <p className="text-red-300 text-sm">{errorMessage}</p>
+        <div className="bg-red-950/40 border border-red-500/40 rounded-lg p-4 mb-8 md:mb-10 max-w-2xl">
+          <p className="text-red-300 text-xs md:text-sm">{errorMessage}</p>
         </div>
       )}
 
       {cart.length === 0 ? (
         <p className="text-gray-400">Your cart is empty.</p>
       ) : (
-        <div className="grid md:grid-cols-2 gap-16">
+        <div className="flex flex-col md:grid md:grid-cols-2 gap-10 md:gap-16">
 
-          {/* Customer Details */}
-          <div>
-            <h2 className="text-2xl font-semibold mb-6">
-              Customer Details
-            </h2>
-
-            <div className="space-y-6">
-
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={customer.name}
-                onChange={(e) =>
-                  setCustomer({ ...customer, name: e.target.value })
-                }
-                className="w-full bg-gray-900 border border-gray-700 px-4 py-3"
-              />
-
-              <input
-                type="text"
-                placeholder="Phone Number"
-                value={customer.phone}
-                onChange={(e) =>
-                  setCustomer({ ...customer, phone: e.target.value })
-                }
-                className="w-full bg-gray-900 border border-gray-700 px-4 py-3"
-              />
-
-              <textarea
-                placeholder="Delivery Address"
-                value={customer.address}
-                onChange={(e) =>
-                  setCustomer({ ...customer, address: e.target.value })
-                }
-                className="w-full bg-gray-900 border border-gray-700 px-4 py-3"
-              />
-
-            </div>
-          </div>
-
-          {/* Order Summary */}
-          <div>
-            <h2 className="text-2xl font-semibold mb-6">
+          {/* Order Summary FIRST on mobile */}
+          <div className="order-1 md:order-2">
+            <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">
               Order Summary
             </h2>
 
-            <div className="space-y-6 mb-10">
+            <div className="bg-neutral-900 border border-yellow-600/20 rounded-xl p-4 md:p-0 md:bg-transparent md:border-0 space-y-4 md:space-y-6 mb-6 md:mb-10">
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="flex justify-between border-b border-yellow-600/30 pb-4"
+                  className="flex justify-between border-b border-yellow-600/30 pb-3 md:pb-4 text-sm md:text-base"
                 >
                   <span>{item.title}</span>
                   <span>
@@ -236,18 +196,57 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-            <h2 className="text-2xl font-bold mb-8">
+            <h2 className="text-xl md:text-2xl font-bold mb-6 md:mb-8">
               Total: ₹{total}
             </h2>
 
             <button
               onClick={handlePayment}
               disabled={isProcessing}
-              className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-gray-700 disabled:cursor-not-allowed text-black px-8 py-3 font-semibold transition"
+              className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-gray-700 disabled:cursor-not-allowed text-black px-8 py-3 font-semibold transition rounded-lg"
             >
               {isProcessing ? "Processing..." : "Pay Now"}
             </button>
+          </div>
 
+          {/* Customer Details SECOND on mobile */}
+          <div className="order-2 md:order-1">
+            <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">
+              Customer Details
+            </h2>
+
+            <div className="space-y-4 md:space-y-6">
+
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={customer.name}
+                onChange={(e) =>
+                  setCustomer({ ...customer, name: e.target.value })
+                }
+                className="w-full bg-gray-900 border border-gray-700 px-4 py-3 rounded-lg text-sm md:text-base"
+              />
+
+              <input
+                type="text"
+                placeholder="Phone Number"
+                value={customer.phone}
+                onChange={(e) =>
+                  setCustomer({ ...customer, phone: e.target.value })
+                }
+                className="w-full bg-gray-900 border border-gray-700 px-4 py-3 rounded-lg text-sm md:text-base"
+              />
+
+              <textarea
+                placeholder="Delivery Address"
+                value={customer.address}
+                onChange={(e) =>
+                  setCustomer({ ...customer, address: e.target.value })
+                }
+                className="w-full bg-gray-900 border border-gray-700 px-4 py-3 rounded-lg text-sm md:text-base"
+              />
+
+            </div>
           </div>
 
         </div>

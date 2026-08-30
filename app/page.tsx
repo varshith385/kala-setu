@@ -31,15 +31,15 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
 
-      {/* HERO — asymmetric split layout */}
-      <section className="grid grid-cols-1 md:grid-cols-5 gap-12 px-6 md:px-16 py-32 items-center border-b border-yellow-600/20">
+      {/* HERO */}
+      <section className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-12 px-5 md:px-16 py-16 md:py-32 items-center border-b border-yellow-600/20">
 
         <div className="md:col-span-3">
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="uppercase tracking-[0.3em] text-xs md:text-sm text-yellow-500/80 mb-6"
+            className="uppercase tracking-[0.2em] md:tracking-[0.3em] text-[10px] md:text-sm text-yellow-500/80 mb-4 md:mb-6"
           >
             A Digital Bridge Between India's Artists and the World
           </motion.p>
@@ -48,20 +48,20 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.1 }}
-            className="font-display text-5xl md:text-7xl font-medium leading-[1.05] mb-8"
+            className="font-display text-4xl md:text-7xl font-medium leading-[1.1] md:leading-[1.05] mb-6 md:mb-8"
           >
             Indian Art <br />
             Deserves A <br />
             <span className="text-yellow-500">Real Marketplace</span>
           </motion.h1>
 
-          <p className="max-w-xl text-gray-400 text-lg mb-4">
+          <p className="max-w-xl text-gray-400 text-base md:text-lg mb-4">
             Independent Indian artists are scattered across Instagram DMs,
             WhatsApp chats and word of mouth — and collectors have no single
             place to discover them.
           </p>
 
-          <p className="max-w-xl text-gray-400 text-lg mb-10">
+          <p className="max-w-xl text-gray-400 text-base md:text-lg mb-8 md:mb-10">
             Kala Setu brings buyers and artists onto one trusted platform —
             to discover, purchase, and commission authentic Indian art.
           </p>
@@ -69,21 +69,20 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/explore"
-              className="border border-yellow-600 text-yellow-500 px-8 py-3 hover:bg-yellow-600 hover:text-black transition duration-500"
+              className="text-center border border-yellow-600 text-yellow-500 px-8 py-3 hover:bg-yellow-600 hover:text-black transition duration-500"
             >
               Explore Collection →
             </Link>
 
             <Link
               href="/custom-request"
-              className="border border-gray-700 text-gray-300 px-8 py-3 hover:border-yellow-600 hover:text-yellow-500 transition duration-500"
+              className="text-center border border-gray-700 text-gray-300 px-8 py-3 hover:border-yellow-600 hover:text-yellow-500 transition duration-500"
             >
               I'm an Artist →
             </Link>
           </div>
         </div>
 
-        {/* Right column — featured artwork preview */}
         <div className="md:col-span-2">
           {featured[0] && (
             <motion.div
@@ -95,13 +94,13 @@ export default function Home() {
               <img
                 src={featured[0].images[0]}
                 alt={featured[0].title}
-                className="w-full h-[480px] object-cover rounded-xl border border-yellow-600/20 transition duration-700 group-hover:scale-[1.02]"
+                className="w-full h-[280px] md:h-[480px] object-cover rounded-xl border border-yellow-600/20 transition duration-700 group-hover:scale-[1.02]"
               />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent p-6 rounded-b-xl">
-                <p className="text-yellow-500 font-display text-xl mb-1">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent p-4 md:p-6 rounded-b-xl">
+                <p className="text-yellow-500 font-display text-lg md:text-xl mb-1">
                   {featured[0].title}
                 </p>
-                <p className="text-gray-300 text-sm">
+                <p className="text-gray-300 text-xs md:text-sm">
                   by {featured[0].artist.name} · ₹{featured[0].pricing.amount}
                 </p>
               </div>
@@ -111,29 +110,29 @@ export default function Home() {
       </section>
 
       {/* TRUST BAR */}
-      <section className="border-b border-yellow-600/20 py-10 px-6 md:px-16">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+      <section className="border-b border-yellow-600/20 py-8 md:py-10 px-5 md:px-16">
+        <div className="max-w-5xl mx-auto grid grid-cols-3 gap-4 md:gap-8 text-center">
           <div>
-            <p className="font-display text-4xl text-yellow-500 mb-1">
+            <p className="font-display text-2xl md:text-4xl text-yellow-500 mb-1">
               {verifiedArtistCount}
             </p>
-            <p className="text-gray-500 text-sm uppercase tracking-wide">
+            <p className="text-gray-500 text-[10px] md:text-sm uppercase tracking-wide">
               Verified Artists
             </p>
           </div>
           <div>
-            <p className="font-display text-4xl text-yellow-500 mb-1">
+            <p className="font-display text-2xl md:text-4xl text-yellow-500 mb-1">
               {totalArtworks}
             </p>
-            <p className="text-gray-500 text-sm uppercase tracking-wide">
+            <p className="text-gray-500 text-[10px] md:text-sm uppercase tracking-wide">
               Curated Artworks
             </p>
           </div>
           <div>
-            <p className="font-display text-4xl text-yellow-500 mb-1">
+            <p className="font-display text-2xl md:text-4xl text-yellow-500 mb-1">
               {avgRating.toFixed(1)} ★
             </p>
-            <p className="text-gray-500 text-sm uppercase tracking-wide">
+            <p className="text-gray-500 text-[10px] md:text-sm uppercase tracking-wide">
               Average Rating
             </p>
           </div>
@@ -147,13 +146,13 @@ export default function Home() {
         viewport={{ once: true, amount: 0.3 }}
         variants={fadeUp}
         transition={{ duration: 0.8 }}
-        className="px-6 md:px-16 py-24 border-b border-yellow-600/20"
+        className="px-5 md:px-16 py-16 md:py-24 border-b border-yellow-600/20"
       >
-        <h2 className="font-display text-3xl md:text-4xl text-yellow-500 mb-16 text-center">
+        <h2 className="font-display text-2xl md:text-4xl text-yellow-500 mb-10 md:mb-16 text-center">
           How Kala Setu Works
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 max-w-5xl mx-auto">
           <Step
             number="01"
             title="Discover"
@@ -172,17 +171,17 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* ARTIST SPOTLIGHT — new section */}
+      {/* ARTIST SPOTLIGHT */}
       <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         variants={fadeUp}
         transition={{ duration: 0.8 }}
-        className="px-6 md:px-16 py-24 border-b border-yellow-600/20"
+        className="px-5 md:px-16 py-16 md:py-24 border-b border-yellow-600/20"
       >
-        <div className="flex justify-between items-end mb-16">
-          <h2 className="font-display text-3xl md:text-4xl text-yellow-500">
+        <div className="flex justify-between items-end mb-10 md:mb-16">
+          <h2 className="font-display text-2xl md:text-4xl text-yellow-500">
             Meet The Artists
           </h2>
           <Link
@@ -193,23 +192,23 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
           {artists.map((artist) => (
             <Link
               key={artist.id}
               href={`/artists/${artist.id}`}
-              className="group flex gap-6 border border-yellow-600/20 p-6 rounded-xl hover:border-yellow-500/50 transition duration-500"
+              className="group flex gap-5 md:gap-6 border border-yellow-600/20 p-5 md:p-6 rounded-xl hover:border-yellow-500/50 transition duration-500"
             >
               <img
                 src={artist.profileImage}
                 alt={artist.name}
-                className="w-24 h-24 rounded-full border-2 border-yellow-600 object-cover flex-shrink-0 transition duration-500 group-hover:border-yellow-400"
+                className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-yellow-600 object-cover flex-shrink-0 transition duration-500 group-hover:border-yellow-400"
               />
               <div>
-                <h3 className="font-display text-xl text-yellow-500 mb-1 group-hover:text-yellow-400 transition">
+                <h3 className="font-display text-lg md:text-xl text-yellow-500 mb-1 group-hover:text-yellow-400 transition">
                   {artist.name}
                 </h3>
-                <p className="text-gray-500 text-xs mb-3">
+                <p className="text-gray-500 text-xs mb-2 md:mb-3">
                   ⭐ {artist.rating} · {artist.location} · {artist.experience}
                 </p>
                 <p className="text-gray-400 text-sm leading-relaxed line-clamp-2">
@@ -262,14 +261,14 @@ export default function Home() {
         viewport={{ once: true, amount: 0.3 }}
         variants={fadeUp}
         transition={{ duration: 0.8 }}
-        className="py-24 px-6 border-t border-yellow-600/20 bg-black"
+        className="py-16 md:py-24 px-5 border-t border-yellow-600/20 bg-black"
       >
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="font-display text-3xl md:text-4xl text-yellow-500 mb-6">
+          <h2 className="font-display text-2xl md:text-4xl text-yellow-500 mb-6">
             Have Something Specific In Mind?
           </h2>
 
-          <p className="text-gray-400 mb-10 leading-relaxed">
+          <p className="text-gray-400 mb-8 md:mb-10 leading-relaxed">
             Skip the search. Tell one of our artists exactly what you're
             picturing — style, size, budget — and get a piece made just
             for you.
@@ -332,32 +331,32 @@ function CategorySection({
       viewport={{ once: true, amount: 0.3 }}
       variants={fadeUp}
       transition={{ duration: 0.8 }}
-      className="px-6 md:px-16 py-24 border-t border-yellow-600/20"
+      className="px-5 md:px-16 py-16 md:py-24 border-t border-yellow-600/20"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
 
-        <div>
-          <h2 className="font-display text-3xl md:text-4xl text-yellow-500 mb-6">
+        <div className="order-2 md:order-1">
+          <h2 className="font-display text-2xl md:text-4xl text-yellow-500 mb-4 md:mb-6">
             {title}
           </h2>
 
-          <p className="text-gray-400 mb-8 leading-relaxed">
+          <p className="text-gray-400 mb-6 md:mb-8 leading-relaxed">
             {description}
           </p>
 
           <Link
             href={link}
-            className="border border-yellow-600 text-yellow-500 px-8 py-3 hover:bg-yellow-600 hover:text-black transition duration-500"
+            className="inline-block border border-yellow-600 text-yellow-500 px-8 py-3 hover:bg-yellow-600 hover:text-black transition duration-500"
           >
             Explore →
           </Link>
         </div>
 
-        <div className="relative group">
+        <div className="order-1 md:order-2 relative group">
           <img
             src={image}
             alt={title}
-            className="h-[350px] w-full object-cover rounded-xl border border-yellow-600/20 transition duration-700 group-hover:scale-105"
+            className="h-[220px] md:h-[350px] w-full object-cover rounded-xl border border-yellow-600/20 transition duration-700 group-hover:scale-105"
           />
         </div>
 
@@ -382,13 +381,13 @@ function ArtworkSection({
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeUp}
       transition={{ duration: 0.8 }}
-      className="px-6 md:px-16 py-24 border-t border-yellow-600/20"
+      className="px-5 md:px-16 py-16 md:py-24 border-t border-yellow-600/20"
     >
-      <h2 className="font-display text-3xl md:text-4xl text-yellow-500 mb-12">
+      <h2 className="font-display text-2xl md:text-4xl text-yellow-500 mb-8 md:mb-12">
         {title}
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-10">
 
         {data.map((art) => (
           <Link
@@ -400,29 +399,29 @@ function ArtworkSection({
               <img
                 src={art.images[0]}
                 alt={art.title}
-                className="h-60 w-full object-cover transition duration-700 group-hover:scale-110"
+                className="h-32 md:h-60 w-full object-cover transition duration-700 group-hover:scale-110"
               />
               {art.pricing.isOnSale && (
-                <span className="absolute top-3 left-3 bg-yellow-500 text-black text-xs px-2 py-1 rounded font-semibold">
+                <span className="absolute top-2 left-2 bg-yellow-500 text-black text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 rounded font-semibold">
                   -{art.pricing.discountPercentage}%
                 </span>
               )}
             </div>
 
-            <div className="p-6">
-              <h3 className="font-display text-yellow-500 text-lg mb-2">
+            <div className="p-3 md:p-6">
+              <h3 className="font-display text-yellow-500 text-sm md:text-lg mb-1 md:mb-2 line-clamp-1">
                 {art.title}
               </h3>
 
-              <p className="text-gray-400 mb-1">
+              <p className="text-gray-400 text-sm md:text-base mb-1">
                 ₹ {art.pricing.amount}
               </p>
 
               <div className="flex items-center justify-between">
-                <p className="text-xs text-gray-500 uppercase">
+                <p className="text-[10px] md:text-xs text-gray-500 uppercase">
                   {art.details.category}
                 </p>
-                <p className="text-xs text-yellow-600">
+                <p className="text-[10px] md:text-xs text-yellow-600">
                   ⭐ {art.engagement.rating}
                 </p>
               </div>

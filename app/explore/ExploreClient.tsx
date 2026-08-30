@@ -91,61 +91,52 @@ export default function ExploreClient() {
     searchQuery !== "" || priceRange !== "" || activeFilter !== null;
 
   return (
-    <main className="min-h-screen bg-black text-white px-6 md:px-16 py-24">
+    <main className="min-h-screen bg-black text-white px-5 md:px-16 py-12 md:py-24">
 
       {/* HEADER */}
-      <div className="mb-14 max-w-6xl mx-auto">
-        <p className="uppercase tracking-[0.25em] text-xs text-yellow-500 mb-3 font-medium">
+      <div className="mb-8 md:mb-14 max-w-6xl mx-auto">
+        <p className="uppercase tracking-[0.2em] md:tracking-[0.25em] text-[10px] md:text-xs text-yellow-500 mb-2 md:mb-3 font-medium">
           {artworks.length} Curated Pieces
         </p>
-        <h1 className="font-display text-4xl md:text-5xl text-white mb-10">
+        <h1 className="font-display text-3xl md:text-5xl text-white mb-6 md:mb-10">
           Explore the <span className="text-yellow-500">Collection</span>
         </h1>
 
         {/* SEARCH BAR */}
-        <div className="relative mb-6">
-          <span className="absolute left-5 top-1/2 -translate-y-1/2 text-yellow-500/70 text-lg">
+        <div className="relative mb-4 md:mb-6">
+          <span className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 text-yellow-500/70 text-base md:text-lg">
             ⌕
           </span>
           <input
             type="text"
-            placeholder="Search by artwork, artist, or style..."
+            placeholder="Search artwork, artist, style..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-neutral-900 border border-yellow-600/40 focus:border-yellow-500 outline-none pl-12 pr-5 py-4 text-white placeholder-gray-400 rounded-lg transition text-base"
+            className="w-full bg-neutral-900 border border-yellow-600/40 focus:border-yellow-500 outline-none pl-11 md:pl-12 pr-4 md:pr-5 py-3 md:py-4 text-white placeholder-gray-400 rounded-lg transition text-sm md:text-base"
           />
         </div>
 
         {/* FILTER + SORT BAR */}
-        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-5 border border-yellow-600/40 p-5 rounded-lg bg-neutral-900">
+        <div className="flex flex-col gap-4 border border-yellow-600/40 p-4 md:p-5 rounded-lg bg-neutral-900">
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3">
 
-            <FilterPill
-              active={!activeFilter}
-              onClick={() => handleFilterChange(null)}
-            >
+            <FilterPill active={!activeFilter} onClick={() => handleFilterChange(null)}>
               All
             </FilterPill>
 
-            <FilterPill
-              active={activeFilter === "physical"}
-              onClick={() => handleFilterChange("physical")}
-            >
+            <FilterPill active={activeFilter === "physical"} onClick={() => handleFilterChange("physical")}>
               Physical
             </FilterPill>
 
-            <FilterPill
-              active={activeFilter === "digital"}
-              onClick={() => handleFilterChange("digital")}
-            >
+            <FilterPill active={activeFilter === "digital"} onClick={() => handleFilterChange("digital")}>
               Digital
             </FilterPill>
 
             <select
               value={priceRange}
               onChange={(e) => setPriceRange(e.target.value)}
-              className="bg-black border border-yellow-600/50 text-yellow-400 px-4 py-2 rounded-md text-sm font-medium"
+              className="bg-black border border-yellow-600/50 text-yellow-400 px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium"
             >
               <option value="">All Prices</option>
               <option value="under15">Under ₹15,000</option>
@@ -156,7 +147,7 @@ export default function ExploreClient() {
             {hasActiveFilters && (
               <button
                 onClick={clearAll}
-                className="text-gray-400 hover:text-yellow-400 text-sm underline transition"
+                className="text-gray-400 hover:text-yellow-400 text-xs md:text-sm underline transition"
               >
                 Clear all
               </button>
@@ -164,15 +155,15 @@ export default function ExploreClient() {
 
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-gray-300 text-sm whitespace-nowrap font-medium">
+          <div className="flex items-center justify-between gap-4 border-t border-yellow-600/10 pt-3 md:border-0 md:pt-0">
+            <span className="text-gray-300 text-xs md:text-sm whitespace-nowrap font-medium">
               {filtered.length} Result{filtered.length !== 1 ? "s" : ""}
             </span>
 
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="bg-black border border-yellow-600/50 text-yellow-400 px-4 py-2 rounded-md text-sm font-medium"
+              className="bg-black border border-yellow-600/50 text-yellow-400 px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium"
             >
               <option value="">Sort By</option>
               <option value="low">Price: Low → High</option>
@@ -185,9 +176,9 @@ export default function ExploreClient() {
 
       {/* GRID */}
       {filtered.length === 0 ? (
-        <div className="text-center py-24 max-w-md mx-auto">
-          <p className="text-5xl mb-4">🔍</p>
-          <p className="text-white text-lg mb-2 font-medium">No artworks found</p>
+        <div className="text-center py-16 md:py-24 max-w-md mx-auto">
+          <p className="text-4xl md:text-5xl mb-4">🔍</p>
+          <p className="text-white text-base md:text-lg mb-2 font-medium">No artworks found</p>
           <p className="text-gray-400 text-sm mb-6">
             Try a different keyword, or clear your filters to see everything.
           </p>
@@ -199,7 +190,7 @@ export default function ExploreClient() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-10 max-w-6xl mx-auto">
           {filtered.map((art) => (
             <Link
               key={art.id}
@@ -210,33 +201,33 @@ export default function ExploreClient() {
                 <img
                   src={art.images[0]}
                   alt={art.title}
-                  className="h-60 w-full object-cover transition duration-700 group-hover:scale-110"
+                  className="h-32 md:h-60 w-full object-cover transition duration-700 group-hover:scale-110"
                 />
                 {art.pricing.isOnSale && (
-                  <span className="absolute top-3 left-3 bg-yellow-500 text-black text-xs px-2 py-1 rounded font-bold">
+                  <span className="absolute top-2 left-2 bg-yellow-500 text-black text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 rounded font-bold">
                     -{art.pricing.discountPercentage}%
                   </span>
                 )}
               </div>
 
-              <div className="p-6">
-                <h3 className="font-display text-yellow-400 text-lg mb-1">
+              <div className="p-3 md:p-6">
+                <h3 className="font-display text-yellow-400 text-sm md:text-lg mb-0.5 md:mb-1 line-clamp-1">
                   {art.title}
                 </h3>
 
-                <p className="text-gray-400 text-xs mb-3">
+                <p className="text-gray-400 text-[10px] md:text-xs mb-2 md:mb-3 line-clamp-1">
                   by {art.artist.name}
                 </p>
 
-                <p className="text-white mb-2 font-semibold text-lg">
+                <p className="text-white mb-1 md:mb-2 font-semibold text-sm md:text-lg">
                   ₹ {art.pricing.amount.toLocaleString("en-IN")}
                 </p>
 
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-400 uppercase font-medium">
+                  <p className="text-[10px] md:text-xs text-gray-400 uppercase">
                     {art.details.category}
                   </p>
-                  <p className="text-xs text-yellow-400 font-medium">
+                  <p className="text-[10px] md:text-xs text-yellow-400 font-medium">
                     ⭐ {art.engagement.rating}
                   </p>
                 </div>
@@ -264,7 +255,7 @@ function FilterPill({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-md text-sm transition font-medium ${
+      className={`px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm transition font-medium ${
         active
           ? "bg-yellow-500 text-black"
           : "border border-yellow-600/50 text-yellow-400 hover:bg-yellow-500/10"
