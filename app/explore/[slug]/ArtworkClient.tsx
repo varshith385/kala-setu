@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "../../context/CartContext";
 import { useRouter } from "next/navigation";
+import RoomPreview from "../../components/RoomPreview";
 
 export default function ArtworkClient({ artwork }: any) {
   const { addToCart } = useCart();
@@ -145,6 +146,10 @@ export default function ArtworkClient({ artwork }: any) {
           >
             Add to Cart
           </button>
+          {/* ROOM PREVIEW */}
+          <div className="mt-10">
+            <RoomPreview artworkImage={artwork.images[0]} artworkTitle={artwork.title} />
+          </div>          
 
         </div>
       </div>

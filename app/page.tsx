@@ -75,7 +75,7 @@ export default function Home() {
             </Link>
 
             <Link
-              href="/custom-request"
+              href="/signup"
               className="text-center border border-gray-700 text-gray-300 px-8 py-3 hover:border-yellow-600 hover:text-yellow-500 transition duration-500"
             >
               I'm an Artist →
