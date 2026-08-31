@@ -9,7 +9,7 @@ export const artists = [
     totalSales: 120,
     followers: 540,
     location: "Hyderabad",
-    phone: "+919876543210",
+    phone: "+918522847389",
     experience: "8 Years",
     specialties: ["Acrylic", "Heritage Themes", "Luxury Art"],
     social: {
@@ -78,7 +78,7 @@ export const artists = [
     totalSales: 85,
     followers: 420,
     location: "Mumbai",
-    phone: "+919845678901",
+    phone: "+918522847389",
     experience: "5 Years",
     specialties: ["Digital Art", "Modern Portraits", "Mythology"],
     social: {
@@ -141,7 +141,7 @@ export const artists = [
     totalSales: 65,
     followers: 610,
     location: "Chennai",
-    phone: "+919756432109",
+    phone: "+918522847389",
     experience: "6 Years",
     specialties: ["Mural Art", "Watercolor", "Digital Illustration"],
     social: {
@@ -200,7 +200,7 @@ export const artists = [
     totalSales: 95,
     followers: 730,
     location: "Jaipur",
-    phone: "+919612345678",
+    phone: "+918522847389",
     experience: "10 Years",
     specialties: ["Miniature Painting", "Gouache", "Mughal Art"],
     social: {

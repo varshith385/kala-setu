@@ -24,7 +24,7 @@ const inter = Inter({
 
 function Navbar() {
   const { cart, openCart } = useCart();
-  const { user, signOut } = useAuth();
+  const { user, role, signOut } = useAuth();
   const [artistOpen, setArtistOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -112,11 +112,15 @@ function Navbar() {
             </div>
 
             {user ? (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-6">
+                {role === "artist" && (
+                  <Link href="/studio" className="flex items-center gap-2 text-yellow-500 hover:text-yellow-400 transition text-sm font-semibold border border-yellow-500/30 bg-yellow-500/5 px-3 py-1.5 rounded-md">
+                    <span className="text-lg leading-none">✨</span> Kala Studio
+                  </Link>
+                )}
                 <Link href="/orders" className="hover:text-yellow-500 transition text-sm">
                   My Orders
                 </Link>
-                <span className="text-xs text-gray-400">{user.email}</span>
                 <button onClick={() => signOut()} className="hover:text-yellow-500 transition text-sm">
                   Log Out
                 </button>
@@ -193,17 +197,21 @@ function Navbar() {
 
           <div className="border-t border-yellow-600/20 pt-5">
             {user ? (
-              <div className="space-y-3">
+              <div className="space-y-4">
+                {role === "artist" && (
+                  <Link href="/studio" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 text-yellow-500 hover:text-yellow-400 transition font-semibold">
+                    <span className="text-lg leading-none">✨</span> Kala Studio
+                  </Link>
+                )}
                 <Link href="/orders" onClick={() => setMobileOpen(false)} className="block hover:text-yellow-500 transition">
                   My Orders
                 </Link>
-                <p className="text-xs text-gray-400">{user.email}</p>
                 <button
                   onClick={() => {
                     signOut();
                     setMobileOpen(false);
                   }}
-                  className="hover:text-yellow-500 transition text-sm"
+                  className="hover:text-yellow-500 transition text-sm block"
                 >
                   Log Out
                 </button>
