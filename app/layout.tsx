@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { WishlistProvider } from "./context/WishlistContext";
 import CartDrawer from "./components/CartDrawer";
 import { artists } from "./data/artists";
+import { Analytics } from "@vercel/analytics/next";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -316,6 +317,7 @@ export default function RootLayout({
 </WishlistProvider>
 </CartProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
