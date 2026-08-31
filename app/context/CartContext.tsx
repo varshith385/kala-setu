@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export type CartItem = {
   id: string;
@@ -28,6 +28,25 @@ const CartContext = createContext<CartContextType | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("kala-setu-cart");
+    if (saved) {
+      try {
+        setCart(JSON.parse(saved));
+      } catch {}
+    }
+    setLoaded(true);
+  }, []);
+
+  // Persist cart to localStorage on every change
+  useEffect(() => {
+    if (loaded) {
+      localStorage.setItem("kala-setu-cart", JSON.stringify(cart));
+    }
+  }, [cart, loaded]);
 
   const addToCart = (item: CartItem) => {
     setCart((prev) => {
@@ -41,16 +60,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, item];
     });
-
     setIsOpen(true);
   };
 
   const increaseQty = (id: string) => {
     setCart((prev) =>
       prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       )
     );
   };
@@ -59,10 +75,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart((prev) =>
       prev.map((item) =>
         item.id === id
-          ? {
-              ...item,
-              quantity: item.quantity > 1 ? item.quantity - 1 : 1,
-            }
+          ? { ...item, quantity: item.quantity > 1 ? item.quantity - 1 : 1 }
           : item
       )
     );

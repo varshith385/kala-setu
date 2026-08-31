@@ -15,8 +15,8 @@ export default function ArtworkClient({ artwork }: any) {
     : artwork.pricing.amount;
 
   return (
-    <main className="min-h-screen bg-black text-white px-16 py-20">
-      <div className="grid md:grid-cols-2 gap-20">
+    <main className="min-h-screen bg-black text-white px-5 md:px-16 py-12 md:py-20">
+      <div className="grid md:grid-cols-2 gap-10 md:gap-20">
 
         {/* IMAGE SECTION */}
         <div>

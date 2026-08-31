@@ -26,11 +26,11 @@ Budget: ₹${form.budget}
 
 Can we discuss further?`;
 
-    const url = `https://wa.me/${form.artistPhone}?text=${encodeURIComponent(
-      message
-    )}`;
+    const url = `https://wa.me/${form.artistPhone}?text=${encodeURIComponent(message)}`;
 
-    window.location.href = url;
+    // Reset form then open WhatsApp in new tab
+    setForm({ name: "", idea: "", budget: "", artistPhone: "" });
+    window.open(url, "_blank");
   };
 
   return (
@@ -53,10 +53,9 @@ Can we discuss further?`;
             <label className="text-gray-400 text-sm mb-2 block">Your Name</label>
             <input
               placeholder="e.g. Priya Sharma"
+              value={form.name}
               className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white placeholder-gray-500"
-              onChange={(e) =>
-                setForm({ ...form, name: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
           </div>
 
@@ -64,11 +63,10 @@ Can we discuss further?`;
             <label className="text-gray-400 text-sm mb-2 block">Describe Your Idea</label>
             <textarea
               placeholder="What do you want the artwork to depict? Style, colors, mood..."
+              value={form.idea}
               className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white placeholder-gray-500"
               rows={4}
-              onChange={(e) =>
-                setForm({ ...form, idea: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, idea: e.target.value })}
             />
           </div>
 
@@ -76,20 +74,18 @@ Can we discuss further?`;
             <label className="text-gray-400 text-sm mb-2 block">Your Budget (₹)</label>
             <input
               placeholder="e.g. 15000"
+              value={form.budget}
               className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white placeholder-gray-500"
-              onChange={(e) =>
-                setForm({ ...form, budget: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, budget: e.target.value })}
             />
           </div>
 
           <div>
             <label className="text-gray-400 text-sm mb-2 block">Select Artist</label>
             <select
+              value={form.artistPhone}
               className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
-              onChange={(e) =>
-                setForm({ ...form, artistPhone: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, artistPhone: e.target.value })}
             >
               <option value="">Choose an artist...</option>
               {artists.map((artist) => (

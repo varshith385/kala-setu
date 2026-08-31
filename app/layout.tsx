@@ -227,6 +227,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+      <head>
+        <title>Kala Setu — Indian Art Marketplace</title>
+        <meta name="description" content="Discover and commission authentic Indian artwork from verified artists." />
+      </head>
       <body>
         <AuthProvider>
         <CartProvider>
