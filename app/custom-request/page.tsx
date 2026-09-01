@@ -8,17 +8,19 @@ export default function CustomRequestPage() {
     name: "",
     idea: "",
     budget: "",
-    artistPhone: "",
+    artistId: "",
   });
 
+  const selectedArtist = artists.find((a) => a.id === form.artistId);
+
   const handleSubmit = () => {
-    if (!form.name || !form.idea || !form.artistPhone) {
+    if (!form.name || !form.idea || !selectedArtist) {
       alert("Please fill all fields");
       return;
     }
 
     const message = `Hello! My name is ${form.name}.
-I want to request a custom artwork.
+I saw your work on Kala Setu and I want to request a custom artwork from ${selectedArtist.name}.
 
 Idea: ${form.idea}
 
@@ -26,11 +28,11 @@ Budget: ₹${form.budget}
 
 Can we discuss further?`;
 
-    const url = `https://wa.me/${form.artistPhone}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/${selectedArtist.phone}?text=${encodeURIComponent(
+      message
+    )}`;
 
-    // Reset form then open WhatsApp in new tab
-    setForm({ name: "", idea: "", budget: "", artistPhone: "" });
-    window.open(url, "_blank");
+    window.location.href = url;
   };
 
   return (
@@ -55,7 +57,9 @@ Can we discuss further?`;
               placeholder="e.g. Priya Sharma"
               value={form.name}
               className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white placeholder-gray-500"
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, name: e.target.value })
+              }
             />
           </div>
 
@@ -66,7 +70,9 @@ Can we discuss further?`;
               value={form.idea}
               className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white placeholder-gray-500"
               rows={4}
-              onChange={(e) => setForm({ ...form, idea: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, idea: e.target.value })
+              }
             />
           </div>
 
@@ -76,20 +82,24 @@ Can we discuss further?`;
               placeholder="e.g. 15000"
               value={form.budget}
               className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white placeholder-gray-500"
-              onChange={(e) => setForm({ ...form, budget: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, budget: e.target.value })
+              }
             />
           </div>
 
           <div>
             <label className="text-gray-400 text-sm mb-2 block">Select Artist</label>
             <select
-              value={form.artistPhone}
+              value={form.artistId}
               className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
-              onChange={(e) => setForm({ ...form, artistPhone: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, artistId: e.target.value })
+              }
             >
               <option value="">Choose an artist...</option>
               {artists.map((artist) => (
-                <option key={artist.id} value={artist.phone}>
+                <option key={artist.id} value={artist.id}>
                   {artist.name} — {artist.specialties[0]}
                 </option>
               ))}
