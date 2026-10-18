@@ -1,14 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
-import { supabase } from "../lib/supabaseClient";
 
 export default function SignupPage() {
   const { signUp } = useAuth();
-  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,26 +28,13 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
 
-    const { error } = await signUp(email, password, role);
+    const cleanEmail = email.trim().toLowerCase();
+    const { error } = await signUp(cleanEmail, password, role);
 
     if (error) {
       setError(error);
       setLoading(false);
       return;
-    }
-
-    // Update the profile role if they chose "artist"
-    // (the trigger already created a 'buyer' row, so we update it if needed)
-    if (role === "artist") {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const userId = sessionData?.session?.user?.id;
-
-      if (userId) {
-        await supabase
-          .from("profiles")
-          .update({ role: "artist" })
-          .eq("id", userId);
-      }
     }
 
     setSuccess(true);
@@ -113,35 +97,47 @@ export default function SignupPage() {
               </div>
             </div>
 
-            <div className="space-y-5">
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
-              />
+            <form onSubmit={(e) => { e.preventDefault(); handleSignup(); }} className="space-y-5">
+              <div>
+                <label htmlFor="signup-email-input" className="sr-only">Email</label>
+                <input
+                  id="signup-email-input"
+                  name="email"
+                  type="email"
+                  placeholder="Email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
+                />
+              </div>
 
-              <input
-                type="password"
-                placeholder="Password (min. 6 characters)"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
-              />
+              <div>
+                <label htmlFor="signup-password-input" className="sr-only">Password</label>
+                <input
+                  id="signup-password-input"
+                  name="password"
+                  type="password"
+                  placeholder="Password (min. 6 characters)"
+                  autoComplete="new-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
+                />
+              </div>
 
               {error && (
                 <p className="text-red-400 text-sm">{error}</p>
               )}
 
               <button
-                onClick={handleSignup}
+                type="submit"
                 disabled={loading}
                 className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-gray-700 text-black px-6 py-3 rounded-lg font-semibold transition"
               >
                 {loading ? "Creating account..." : "Sign Up"}
               </button>
-            </div>
+            </form>
 
             <p className="text-gray-400 text-sm text-center mt-6">
               Already have an account?{" "}

@@ -2,10 +2,17 @@
 
 import { useState } from "react";
 
+interface Review {
+  id: string;
+  name: string;
+  rating: number;
+  comment: string;
+}
+
 export default function ReviewSection({
   initialReviews,
 }: {
-  initialReviews: any[];
+  initialReviews: Review[];
 }) {
   const [reviews, setReviews] = useState(initialReviews);
   const [name, setName] = useState("");
@@ -39,8 +46,11 @@ export default function ReviewSection({
         className="mb-10 border border-yellow-600/20 p-6 rounded-lg"
       >
         <input
+          id="review-author-name"
+          name="authorName"
           type="text"
           placeholder="Your Name"
+          aria-label="Your Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full mb-4 p-2 bg-black border border-yellow-600/30 rounded"
@@ -48,6 +58,9 @@ export default function ReviewSection({
         />
 
         <select
+          id="review-rating-select"
+          name="rating"
+          aria-label="Rating"
           value={rating}
           onChange={(e) => setRating(Number(e.target.value))}
           className="w-full mb-4 p-2 bg-black border border-yellow-600/30 rounded"
@@ -58,7 +71,10 @@ export default function ReviewSection({
         </select>
 
         <textarea
+          id="review-comment-text"
+          name="comment"
           placeholder="Write your review..."
+          aria-label="Write your review"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           className="w-full mb-4 p-2 bg-black border border-yellow-600/30 rounded"

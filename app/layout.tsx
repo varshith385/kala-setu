@@ -7,6 +7,7 @@ import { Playfair_Display, Inter } from "next/font/google";
 import { CartProvider, useCart } from "./context/CartContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { WishlistProvider } from "./context/WishlistContext";
+import { CollectorProvider } from "./context/CollectorContext";
 import CartDrawer from "./components/CartDrawer";
 import { artists } from "./data/artists";
 
@@ -118,8 +119,13 @@ function Navbar() {
                     <span className="text-lg leading-none">✨</span> Kala Studio
                   </Link>
                 )}
-                <Link href="/orders" className="hover:text-yellow-500 transition text-sm">
-                  My Orders
+                {role === "admin" && (
+                  <Link href="/admin" className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition text-sm font-semibold border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 rounded-md">
+                    <span>🛡️</span> Admin Console
+                  </Link>
+                )}
+                <Link href="/account" className="text-yellow-500/90 hover:text-yellow-400 transition text-sm flex items-center gap-1 font-medium">
+                  <span>🏛️</span> Vault & Orders
                 </Link>
                 <button onClick={() => signOut()} className="hover:text-yellow-500 transition text-sm">
                   Log Out
@@ -203,8 +209,13 @@ function Navbar() {
                     <span className="text-lg leading-none">✨</span> Kala Studio
                   </Link>
                 )}
-                <Link href="/orders" onClick={() => setMobileOpen(false)} className="block hover:text-yellow-500 transition">
-                  My Orders
+                {role === "admin" && (
+                  <Link href="/admin" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition font-semibold">
+                    <span>🛡️</span> Admin Console
+                  </Link>
+                )}
+                <Link href="/account" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 text-yellow-500/90 hover:text-yellow-400 transition font-medium">
+                  <span>🏛️</span> Vault & Orders
                 </Link>
                 <button
                   onClick={() => {
@@ -234,13 +245,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${playfair.variable} ${inter.variable}`}>
       <head>
         <title>Kala Setu — Indian Art Marketplace</title>
-        <meta name="description" content="Discover and commission authentic Indian artwork from verified artists." />
+        <meta name="description" content="Discover, acquire, and commission authentic Indian fine art directly from verified independent creators." />
+        <meta property="og:title" content="Kala Setu — Connecting Artists to the World" />
+        <meta property="og:description" content="Discover, acquire, and commission authentic Indian fine art directly from verified independent creators." />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Kala Setu" />
+        <meta name="theme-color" content="#000000" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <AuthProvider>
+        <CollectorProvider>
         <CartProvider>
         <WishlistProvider>
   <Navbar />
@@ -256,7 +273,7 @@ export default function RootLayout({
           KALA SETU
         </h2>
         <p className="text-gray-400 text-xs leading-relaxed">
-          Connecting collectors with India's finest physical and digital artists.
+          Connecting collectors with India&apos;s finest physical and digital artists.
         </p>
       </div>
 
@@ -265,7 +282,7 @@ export default function RootLayout({
           KALA SETU
         </h2>
         <p className="text-gray-400 text-sm leading-relaxed max-w-md mb-12">
-          Connecting collectors with India's finest physical and digital artists.
+          Connecting collectors with India&apos;s finest physical and digital artists.
           Discover curated artworks and commission custom pieces directly from creators.
         </p>
       </div>
@@ -279,6 +296,8 @@ export default function RootLayout({
             <li><Link href="/artists">Artists</Link></li>
             <li><Link href="/custom-request">Custom Artwork</Link></li>
             <li><Link href="/wishlist">Wishlist</Link></li>
+            <li><Link href="/account">Collector Vault</Link></li>
+            <li><Link href="/policies">Policies & Guarantees</Link></li>
             <li><Link href="/cart">Cart</Link></li>
           </ul>
         </div>
@@ -315,6 +334,7 @@ export default function RootLayout({
   <CartDrawer />
 </WishlistProvider>
 </CartProvider>
+</CollectorProvider>
         </AuthProvider>
       </body>
     </html>

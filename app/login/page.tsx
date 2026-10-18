@@ -23,7 +23,8 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const { error } = await signIn(email, password);
+    const cleanEmail = email.trim().toLowerCase();
+    const { error } = await signIn(cleanEmail, password);
 
     if (error) {
       setError(error);
@@ -45,38 +46,50 @@ export default function LoginPage() {
           Log In
         </h1>
 
-        <div className="space-y-5">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
-          />
+        <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-5">
+          <div>
+            <label htmlFor="login-email-input" className="sr-only">Email</label>
+            <input
+              id="login-email-input"
+              name="email"
+              type="email"
+              placeholder="Email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
-          />
+          <div>
+            <label htmlFor="login-password-input" className="sr-only">Password</label>
+            <input
+              id="login-password-input"
+              name="password"
+              type="password"
+              placeholder="Password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-black border border-yellow-600/40 focus:border-yellow-500 outline-none px-4 py-3 rounded-lg text-white"
+            />
+          </div>
 
           {error && (
             <p className="text-red-400 text-sm">{error}</p>
           )}
 
           <button
-            onClick={handleLogin}
+            type="submit"
             disabled={loading}
             className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-gray-700 text-black px-6 py-3 rounded-lg font-semibold transition"
           >
             {loading ? "Logging in..." : "Log In"}
           </button>
-        </div>
+        </form>
 
         <p className="text-gray-400 text-sm text-center mt-6">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/signup" className="text-yellow-500 hover:underline">
             Sign Up
           </Link>

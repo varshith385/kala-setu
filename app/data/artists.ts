@@ -4,13 +4,21 @@ export const artists = [
     name: "Aarav Sharma",
     bio: "A contemporary Indian artist blending traditional motifs with modern luxury aesthetics.",
     profileImage: "/artist1.jpg",
+    coverImage: "/art1.jpg",
     verified: true,
     rating: 4.8,
     totalSales: 120,
     followers: 540,
     location: "Hyderabad",
+    studioLocation: "Banjara Hills, Hyderabad, Telangana",
     phone: "+918522847389",
     experience: "8 Years",
+    artisticPractice: "Layered acrylic impasto on Belgian linen with 24k gold leaf burnishing, inspired by royal Deccan courts and temple iconography.",
+    exhibitions: [
+      "India Art Fair 2024 (New Delhi)",
+      "Deccan Heritage Contemporary Biennale 2023 (Hyderabad)",
+      "Royal Courtyard Retrospective 2022 (Bengaluru)"
+    ],
     specialties: ["Acrylic", "Heritage Themes", "Luxury Art"],
     social: {
       instagram: "@aarav.art",
@@ -55,15 +63,15 @@ export const artists = [
     reviews: [
       {
         id: "rev-001",
-        name: "Rahul",
+        name: "Rahul K.",
         rating: 5,
-        comment: "Absolutely stunning artwork and premium finish!",
+        comment: "Absolutely stunning artwork and premium finish. The gold leaf glows under gallery lighting!",
       },
       {
         id: "rev-002",
-        name: "Meera",
+        name: "Meera S.",
         rating: 4,
-        comment: "Loved the detailing and communication.",
+        comment: "Loved the detailing and communication. Secure delivery to Bengaluru.",
       },
     ],
   },
@@ -71,15 +79,23 @@ export const artists = [
   {
     id: "artist-002",
     name: "Riya Verma",
-    bio: "A digital illustrator known for futuristic Indian themes and bold storytelling.",
+    bio: "A digital illustrator known for futuristic Indian themes, cyberpunk aesthetics, and bold mythological storytelling.",
     profileImage: "/artist2.jpg",
+    coverImage: "/art3.jpg",
     verified: true,
     rating: 4.7,
     totalSales: 85,
     followers: 420,
     location: "Mumbai",
+    studioLocation: "Bandra West, Mumbai, Maharashtra",
     phone: "+918522847389",
     experience: "5 Years",
+    artisticPractice: "High-resolution digital painting combining neo-Indian cyberpunk surrealism with sacred Vedic geometry and character lore.",
+    exhibitions: [
+      "Digital Horizons Mumbai 2024",
+      "Asia Digital Art Triennale 2023",
+      "NFT Asia Showcase Tokyo 2023"
+    ],
     specialties: ["Digital Art", "Modern Portraits", "Mythology"],
     social: {
       instagram: "@riya.creates",
@@ -124,9 +140,9 @@ export const artists = [
     reviews: [
       {
         id: "rev-003",
-        name: "Arjun",
+        name: "Arjun P.",
         rating: 5,
-        comment: "Creative and futuristic designs. Highly recommended!",
+        comment: "Creative and futuristic designs. Highly recommended for modern spaces!",
       },
     ],
   },
@@ -134,15 +150,23 @@ export const artists = [
   {
     id: "artist-003",
     name: "Meera Iyer",
-    bio: "A Chennai-based artist reviving traditional Kerala mural techniques with a contemporary eye.",
+    bio: "A Chennai-based artist reviving traditional Kerala mural techniques with natural pigments and a contemporary eye.",
     profileImage: "/artist3.jpg",
+    coverImage: "/art8.jpg",
     verified: true,
     rating: 4.9,
     totalSales: 65,
     followers: 610,
     location: "Chennai",
+    studioLocation: "Mylapore, Chennai, Tamil Nadu",
     phone: "+918522847389",
     experience: "6 Years",
+    artisticPractice: "Panchavarna (five sacred mineral pigments) hand-ground from natural river stones, soot, and botanical oils on seasoned wood panels.",
+    exhibitions: [
+      "DakshinaChitra Heritage Showcase 2024",
+      "Kochi-Muziris Biennale Collateral 2023",
+      "Craft Council of India Gallery 2022"
+    ],
     specialties: ["Mural Art", "Watercolor", "Digital Illustration"],
     social: {
       instagram: "@meera.murals",
@@ -183,9 +207,9 @@ export const artists = [
     reviews: [
       {
         id: "rev-004",
-        name: "Priya",
+        name: "Priya M.",
         rating: 5,
-        comment: "The colors are even more vivid in person. Truly heirloom quality.",
+        comment: "The colors are even more vivid in person. Truly heirloom quality craftsmanship.",
       },
     ],
   },
@@ -193,15 +217,23 @@ export const artists = [
   {
     id: "artist-004",
     name: "Kabir Khan",
-    bio: "A Jaipur-based miniature painter trained in traditional Rajasthani court painting techniques.",
+    bio: "A Jaipur-based master miniaturist trained in traditional Mewar and Kishangarh court painting techniques.",
     profileImage: "/artist4.jpg",
+    coverImage: "/art11.jpg",
     verified: true,
     rating: 4.8,
     totalSales: 95,
     followers: 730,
     location: "Jaipur",
+    studioLocation: "Johari Bazaar, Jaipur, Rajasthan",
     phone: "+918522847389",
     experience: "10 Years",
+    artisticPractice: "Single-squirrel-hair miniature brushwork using hand-ground stone lapis lazuli and malachite on antique wasli paper.",
+    exhibitions: [
+      "Jaipur Literature Festival Art Courtyard 2024",
+      "Rajasthan Heritage Crafts Trust 2023",
+      "National Crafts Museum New Delhi 2021"
+    ],
     specialties: ["Miniature Painting", "Gouache", "Mughal Art"],
     social: {
       instagram: "@kabir.miniatures",
@@ -242,11 +274,13 @@ export const artists = [
     reviews: [
       {
         id: "rev-005",
-        name: "Anand",
+        name: "Anand V.",
         rating: 5,
-        comment: "Museum-quality detail. This artist is a treasure.",
+        comment: "Museum-quality detail. The brushwork under magnification is astonishing.",
       },
     ],
   },
 
 ];
+
+export type Artist = (typeof artists)[number];

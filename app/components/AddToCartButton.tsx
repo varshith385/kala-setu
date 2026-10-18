@@ -3,16 +3,36 @@
 import { useCart } from "../context/CartContext";
 import { useRouter } from "next/navigation";
 
-export default function AddToCartButton({ artwork }: { artwork: any }) {
+interface ArtworkProp {
+  id: string;
+  title: string;
+  price?: number;
+  pricing?: {
+    amount: number;
+    currency?: string;
+    isOnSale?: boolean;
+    discountPercentage?: number;
+  };
+}
+
+export default function AddToCartButton({ artwork }: { artwork: ArtworkProp }) {
   const { addToCart } = useCart();
   const router = useRouter();
 
   const handleAdd = () => {
+    const effectivePrice =
+      artwork.pricing?.isOnSale && artwork.pricing.discountPercentage
+        ? Math.round(
+            artwork.pricing.amount -
+              (artwork.pricing.amount * artwork.pricing.discountPercentage) / 100
+          )
+        : artwork.pricing?.amount ?? artwork.price ?? 0;
+
     addToCart({
       id: artwork.id,
       title: artwork.title,
       pricing: {
-        amount: artwork.pricing?.amount ?? artwork.price,
+        amount: effectivePrice,
       },
       quantity: 1,
     });

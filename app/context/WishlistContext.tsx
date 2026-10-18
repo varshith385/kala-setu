@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
 
 type WishlistContextType = {
   wishlist: string[];
@@ -12,21 +12,34 @@ const WishlistContext = createContext<WishlistContextType | null>(null);
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<string[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const isHydrated = useRef(false);
 
+  // Restore wishlist on mount
   useEffect(() => {
-    const saved = localStorage.getItem("kala-setu-wishlist");
-    if (saved) {
-      setWishlist(JSON.parse(saved));
+    try {
+      const saved = localStorage.getItem("kala-setu-wishlist");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setWishlist(parsed);
+        }
+      }
+    } catch {
+      // Ignore storage errors safely
+    } finally {
+      isHydrated.current = true;
     }
-    setLoaded(true);
   }, []);
 
+  // Persist wishlist to localStorage only after initial hydration
   useEffect(() => {
-    if (loaded) {
+    if (!isHydrated.current) return;
+    try {
       localStorage.setItem("kala-setu-wishlist", JSON.stringify(wishlist));
+    } catch {
+      // Ignore storage errors safely
     }
-  }, [wishlist, loaded]);
+  }, [wishlist]);
 
   const toggleWishlist = (id: string) => {
     setWishlist((prev) =>

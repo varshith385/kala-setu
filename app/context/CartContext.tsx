@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
+import { getArtworkById, getMaxOrderQuantity } from "@/app/lib/catalogue";
 
 export type CartItem = {
   id: string;
@@ -28,45 +29,71 @@ const CartContext = createContext<CartContextType | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const isHydrated = useRef(false);
 
-  // Load cart from localStorage on mount
+  // Restore cart on mount
   useEffect(() => {
-    const saved = localStorage.getItem("kala-setu-cart");
-    if (saved) {
-      try {
-        setCart(JSON.parse(saved));
-      } catch {}
+    try {
+      const saved = localStorage.getItem("kala-setu-cart");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          // Normalize restored items against stock limits
+          const sanitized = parsed.map((item: CartItem) => {
+            const art = getArtworkById(item.id);
+            const maxQty = art ? getMaxOrderQuantity(art) : 25;
+            return {
+              ...item,
+              quantity: Math.max(1, Math.min(item.quantity || 1, maxQty || 1)),
+            };
+          });
+          setCart(sanitized);
+        }
+      }
+    } catch {
+      // Ignore storage errors safely
+    } finally {
+      isHydrated.current = true;
     }
-    setLoaded(true);
   }, []);
 
-  // Persist cart to localStorage on every change
+  // Persist cart to localStorage only after initial hydration
   useEffect(() => {
-    if (loaded) {
+    if (!isHydrated.current) return;
+    try {
       localStorage.setItem("kala-setu-cart", JSON.stringify(cart));
+    } catch {
+      // Ignore storage errors safely
     }
-  }, [cart, loaded]);
+  }, [cart]);
 
   const addToCart = (item: CartItem) => {
+    const art = getArtworkById(item.id);
+    const maxQty = art ? getMaxOrderQuantity(art) : 25;
+
     setCart((prev) => {
       const existing = prev.find((p) => p.id === item.id);
       if (existing) {
         return prev.map((p) =>
           p.id === item.id
-            ? { ...p, quantity: p.quantity + item.quantity }
+            ? { ...p, quantity: Math.min(p.quantity + (item.quantity || 1), maxQty) }
             : p
         );
       }
-      return [...prev, item];
+      return [...prev, { ...item, quantity: Math.min(item.quantity || 1, maxQty) }];
     });
     setIsOpen(true);
   };
 
   const increaseQty = (id: string) => {
+    const art = getArtworkById(id);
+    const maxQty = art ? getMaxOrderQuantity(art) : 25;
+
     setCart((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === id
+          ? { ...item, quantity: Math.min(item.quantity + 1, maxQty) }
+          : item
       )
     );
   };
