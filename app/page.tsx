@@ -11,6 +11,7 @@ import ArtworkCard from "./components/ArtworkCard";
 import ArtistCard from "./components/ArtistCard";
 import RecentlyViewed from "./components/RecentlyViewed";
 import RoomModal from "./components/RoomModal";
+import NavbarSearch from "./components/NavbarSearch";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 35 },
@@ -125,35 +126,18 @@ export default function Home() {
             </motion.p>
 
             {/* QUICK DISCOVERY SEARCH BAR */}
-            <motion.form
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.25 }}
-              onSubmit={handleSearchSubmit}
-              className="relative max-w-xl mb-6 flex items-center"
+              className="relative max-w-xl mb-6"
             >
-              <div className="relative w-full">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-yellow-500/70 text-lg">
-                  ⌕
-                </span>
-                <input
-                  id="hero-search-input"
-                  name="q"
-                  type="text"
-                  placeholder="Search by medium, artist name, style, or title..."
-                  aria-label="Search artworks by medium, artist name, style, or title"
-                  value={heroSearch}
-                  onChange={(e) => setHeroSearch(e.target.value)}
-                  className="w-full bg-neutral-900/90 border border-yellow-600/40 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/50 outline-none pl-12 pr-28 py-3.5 text-white placeholder-neutral-400 rounded-xl text-sm transition shadow-inner"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition shadow-md"
-                >
-                  Explore →
-                </button>
-              </div>
-            </motion.form>
+              <NavbarSearch
+                id="hero-search-input"
+                variant="hero"
+                placeholder="Search by medium, artist name, style, or title..."
+              />
+            </motion.div>
 
             {/* Popular Search Suggestions */}
             <motion.div

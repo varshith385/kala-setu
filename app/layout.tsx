@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { WishlistProvider } from "./context/WishlistContext";
 import { CollectorProvider } from "./context/CollectorContext";
 import CartDrawer from "./components/CartDrawer";
+import NavbarSearch from "./components/NavbarSearch";
 import { artists } from "./data/artists";
 
 const playfair = Playfair_Display({
@@ -34,13 +35,19 @@ function Navbar() {
   return (
     <>
       <nav className="bg-black text-white border-b border-yellow-600/20 relative">
-        <div className="flex justify-between items-center px-6 md:px-16 py-6">
+        <div className="flex justify-between items-center px-6 md:px-16 py-4 md:py-6 gap-4">
 
-          <Link href="/" className="font-display text-xl md:text-2xl text-yellow-500 tracking-widest whitespace-nowrap">
-            KALA SETU
-          </Link>
+          <div className="flex items-center gap-6 xl:gap-8 flex-1 lg:flex-initial">
+            <Link href="/" className="font-display text-xl md:text-2xl text-yellow-500 tracking-widest whitespace-nowrap">
+              KALA SETU
+            </Link>
 
-          <div className="hidden lg:flex items-center gap-10 relative">
+            <div className="hidden lg:block w-56 xl:w-72">
+              <NavbarSearch />
+            </div>
+          </div>
+
+          <div className="hidden lg:flex items-center gap-8 xl:gap-10 relative">
 
             <Link href="/explore" className="hover:text-yellow-500 transition">
               Explore
@@ -188,6 +195,10 @@ function Navbar() {
         </div>
 
         <div className="p-6 space-y-5">
+          <div className="mb-2">
+            <NavbarSearch variant="mobile" onNavigate={() => setMobileOpen(false)} />
+          </div>
+
           <Link href="/explore" onClick={() => setMobileOpen(false)} className="block hover:text-yellow-500 transition">
             Explore
           </Link>

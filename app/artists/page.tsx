@@ -4,6 +4,40 @@ import { useState } from "react";
 import Link from "next/link";
 import { artists } from "../data/artists";
 import ArtistCard from "../components/ArtistCard";
+import { isFuzzyMatch, phoneticKey } from "../lib/artSearchEngine";
+
+function matchesArtist(artist: (typeof artists)[number], query: string): boolean {
+  const cleanQuery = query.toLowerCase().trim();
+  if (!cleanQuery) return true;
+
+  // 1. Exact or substring match across all artist fields
+  if (
+    artist.name.toLowerCase().includes(cleanQuery) ||
+    artist.location.toLowerCase().includes(cleanQuery) ||
+    artist.bio.toLowerCase().includes(cleanQuery) ||
+    artist.specialties.some((s) => s.toLowerCase().includes(cleanQuery))
+  ) {
+    return true;
+  }
+
+  // 2. Tokenized fuzzy & phonetic matching for typos
+  const queryTokens = cleanQuery.split(/\s+/).filter((t) => t.length > 1);
+  if (queryTokens.length === 0) return true;
+
+  const artistTokens = [
+    ...artist.name.toLowerCase().split(/\s+/),
+    ...artist.location.toLowerCase().split(/\s+/),
+    ...artist.specialties.flatMap((s) => s.toLowerCase().split(/\s+/)),
+  ];
+
+  return queryTokens.every((qToken) =>
+    artistTokens.some(
+      (aToken) =>
+        isFuzzyMatch(qToken, aToken) ||
+        phoneticKey(qToken) === phoneticKey(aToken)
+    )
+  );
+}
 
 export default function AllArtistsPage() {
   const [search, setSearch] = useState("");
@@ -13,14 +47,7 @@ export default function AllArtistsPage() {
 
   let filtered = artists;
   if (search.trim()) {
-    const q = search.toLowerCase().trim();
-    filtered = filtered.filter(
-      (a) =>
-        a.name.toLowerCase().includes(q) ||
-        a.bio.toLowerCase().includes(q) ||
-        a.location.toLowerCase().includes(q) ||
-        a.specialties.some((s) => s.toLowerCase().includes(q))
-    );
+    filtered = filtered.filter((a) => matchesArtist(a, search));
   }
 
   if (selectedLocation) {
