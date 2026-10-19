@@ -9,9 +9,10 @@ interface ArtworkCardProps {
   artwork: Artwork;
   onViewInRoom?: (artwork: Artwork) => void;
   priority?: boolean;
+  matchReasons?: string[];
 }
 
-export default function ArtworkCard({ artwork, onViewInRoom, priority = false }: ArtworkCardProps) {
+export default function ArtworkCard({ artwork, onViewInRoom, priority = false, matchReasons }: ArtworkCardProps) {
   const discountedPrice =
     artwork.pricing.isOnSale &&
     typeof artwork.pricing.discountPercentage === "number" &&
@@ -107,6 +108,20 @@ export default function ArtworkCard({ artwork, onViewInRoom, priority = false }:
             <p className="text-[11px] text-gray-500 mt-0.5">
               {artwork.details.dimensions}
             </p>
+          )}
+
+          {/* AI DISCOVERY MATCH REASONS */}
+          {matchReasons && matchReasons.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {matchReasons.slice(0, 2).map((reason, idx) => (
+                <span
+                  key={idx}
+                  className="inline-flex items-center text-[10px] font-medium bg-yellow-500/10 text-yellow-300 border border-yellow-500/25 px-2 py-0.5 rounded-full"
+                >
+                  ✦ {reason}
+                </span>
+              ))}
+            </div>
           )}
         </div>
 

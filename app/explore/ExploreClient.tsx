@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { artworks, Artwork } from "../data/artworks";
 import ArtworkCard from "../components/ArtworkCard";
 import RoomModal from "../components/RoomModal";
 import { useCollector } from "../context/CollectorContext";
+import { searchArtworks, SearchResultPackage } from "../lib/artSearchEngine";
 
 // Helper to deduce orientation from actual dimensions (e.g. "24x36 inches")
 function getArtworkOrientation(dimensions?: string): "portrait" | "landscape" | "square" | null {
@@ -55,6 +56,27 @@ export default function ExploreClient() {
   const activeOnSale = searchParams.get("onSale") === "true";
   const activeInStock = searchParams.get("inStock") === "true";
 
+  // Debounced input state for real-time smooth search with shareable URL synchronization
+  const [inputValue, setInputValue] = useState(searchQuery);
+  const [isDebouncing, setIsDebouncing] = useState(false);
+
+  useEffect(() => {
+    setInputValue(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (inputValue === searchQuery) {
+      setIsDebouncing(false);
+      return;
+    }
+    setIsDebouncing(true);
+    const timer = setTimeout(() => {
+      updateFilter({ q: inputValue.trim() || null });
+      setIsDebouncing(false);
+    }, 280);
+    return () => clearTimeout(timer);
+  }, [inputValue, searchQuery]);
+
   // Helper to calculate effective price (incorporating active sale discounts)
   const getEffectivePrice = (art: Artwork) => {
     if (art.pricing.isOnSale && typeof art.pricing.discountPercentage === "number" && art.pricing.discountPercentage > 0) {
@@ -78,101 +100,104 @@ export default function ExploreClient() {
   };
 
   const clearAll = () => {
+    setInputValue("");
     router.push("/explore");
   };
 
-  // 1. Text Search Filter (Title, Artist, Tags, Medium, Description, Tradition, Style)
-  let filtered = artworks;
-  if (searchQuery.trim() !== "") {
-    const q = searchQuery.trim().toLowerCase();
-    filtered = filtered.filter(
-      (art) =>
-        art.title.toLowerCase().includes(q) ||
-        art.artist.name.toLowerCase().includes(q) ||
-        art.details.medium.toLowerCase().includes(q) ||
-        (art.details.style && art.details.style.toLowerCase().includes(q)) ||
-        (art.details.regionalTradition && art.details.regionalTradition.toLowerCase().includes(q)) ||
-        art.tags.some((tag) => tag.toLowerCase().includes(q)) ||
-        art.description.toLowerCase().includes(q)
-    );
-  }
+  // 1. Facet Filtering (applied to catalogue candidates)
+  let candidates = artworks;
 
-  // 2. Type Filter (Physical vs Digital)
+  // Type Filter (Physical vs Digital)
   if (activeType === "physical") {
-    filtered = filtered.filter((art) => art.type === "physical" || art.details.category === "Physical Art");
+    candidates = candidates.filter((art) => art.type === "physical" || art.details.category === "Physical Art");
   } else if (activeType === "digital") {
-    filtered = filtered.filter((art) => art.type === "digital" || art.details.category === "Digital Art");
+    candidates = candidates.filter((art) => art.type === "digital" || art.details.category === "Digital Art");
   }
 
-  // 3. Medium Filter
+  // Medium Filter
   if (activeMedium) {
-    filtered = filtered.filter((art) =>
+    candidates = candidates.filter((art) =>
       art.details.medium.toLowerCase().includes(activeMedium.toLowerCase())
     );
   }
 
-  // 4. Regional Tradition Filter
+  // Regional Tradition Filter
   if (activeTradition) {
-    filtered = filtered.filter((art) =>
+    candidates = candidates.filter((art) =>
       art.details.regionalTradition?.toLowerCase().includes(activeTradition.toLowerCase()) ||
       art.details.style?.toLowerCase().includes(activeTradition.toLowerCase())
     );
   }
 
-  // 5. Room Suitability Filter
+  // Room Suitability Filter
   if (activeRoom) {
-    filtered = filtered.filter((art) =>
+    candidates = candidates.filter((art) =>
       art.details.roomSuitability?.some((r) => r.toLowerCase().includes(activeRoom.toLowerCase()))
     );
   }
 
-  // 6. Orientation Filter
+  // Orientation Filter
   if (activeOrientation) {
-    filtered = filtered.filter((art) => {
+    candidates = candidates.filter((art) => {
       const orient = getArtworkOrientation(art.details.dimensions);
       return orient === activeOrientation;
     });
   }
 
-  // 7. Framing Filter
+  // Framing Filter
   if (activeFramed === "framed") {
-    filtered = filtered.filter((art) => Boolean(art.details.framed));
+    candidates = candidates.filter((art) => Boolean(art.details.framed));
   } else if (activeFramed === "unframed") {
-    filtered = filtered.filter((art) => !art.details.framed);
+    candidates = candidates.filter((art) => !art.details.framed);
   }
 
-  // 8. On Sale Filter
+  // On Sale Filter
   if (activeOnSale) {
-    filtered = filtered.filter((art) => Boolean(art.pricing.isOnSale));
+    candidates = candidates.filter((art) => Boolean(art.pricing.isOnSale));
   }
 
-  // 9. In Stock Filter
+  // In Stock Filter
   if (activeInStock) {
-    filtered = filtered.filter((art) => Boolean(art.inventory?.available));
+    candidates = candidates.filter((art) => Boolean(art.inventory?.available));
   }
 
-  // 10. Price Range Filter (Uses effective discounted price)
+  // Price Range Filter (Uses effective discounted price)
   if (activePriceRange === "under12") {
-    filtered = filtered.filter((art) => getEffectivePrice(art) < 12000);
+    candidates = candidates.filter((art) => getEffectivePrice(art) < 12000);
   } else if (activePriceRange === "12to16") {
-    filtered = filtered.filter(
+    candidates = candidates.filter(
       (art) => getEffectivePrice(art) >= 12000 && getEffectivePrice(art) <= 16000
     );
   } else if (activePriceRange === "16to20") {
-    filtered = filtered.filter(
+    candidates = candidates.filter(
       (art) => getEffectivePrice(art) > 16000 && getEffectivePrice(art) <= 20000
     );
   } else if (activePriceRange === "above20") {
-    filtered = filtered.filter((art) => getEffectivePrice(art) > 20000);
+    candidates = candidates.filter((art) => getEffectivePrice(art) > 20000);
   } else if (activePriceRange === "under15") {
-    filtered = filtered.filter((art) => getEffectivePrice(art) < 15000);
+    candidates = candidates.filter((art) => getEffectivePrice(art) < 15000);
   } else if (activePriceRange === "15to20") {
-    filtered = filtered.filter(
+    candidates = candidates.filter(
       (art) => getEffectivePrice(art) >= 15000 && getEffectivePrice(art) <= 20000
     );
   }
 
-  // 11. Sorting
+  // 2. Multi-tier Hybrid AI Art Discovery (Exact, Fuzzy, Transliterations, Synonyms & Intent)
+  const searchPkg: SearchResultPackage = useMemo(() => {
+    return searchArtworks(searchQuery, candidates);
+  }, [searchQuery, candidates]);
+
+  const reasonsMap = useMemo(() => {
+    const map: Record<string, string[]> = {};
+    for (const res of searchPkg.results) {
+      map[res.artwork.id] = res.matchReasons;
+    }
+    return map;
+  }, [searchPkg.results]);
+
+  let filtered = searchPkg.artworks;
+
+  // 3. Sorting (Preserve AI relevance rank by default if search query active, else apply explicit user sort)
   if (activeSort === "low") {
     filtered = [...filtered].sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
   } else if (activeSort === "high") {
@@ -246,30 +271,104 @@ export default function ExploreClient() {
           Explore the <span className="text-yellow-400">Collection</span>
         </h1>
 
-        {/* SEARCH BAR */}
-        <div className="relative mb-5 md:mb-6">
-          <span className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 text-yellow-500/70 text-base md:text-lg">
-            ⌕
+        {/* SEARCH BAR WITH AI DISCOVERY INDICATOR */}
+        <div className="relative mb-3">
+          <span className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 text-yellow-500/80 text-base md:text-lg flex items-center">
+            {isDebouncing ? (
+              <span className="inline-block animate-spin text-yellow-400">✦</span>
+            ) : (
+              <span>⌕</span>
+            )}
           </span>
           <input
             id="explore-search-input"
             name="q"
             type="text"
-            placeholder="Search by title, artist, medium (Acrylic, Oil, Gouache), regional tradition (Pichwai, Deccan), or tags..."
-            value={searchQuery}
-            onChange={(e) => updateFilter({ q: e.target.value || null })}
-            className="w-full bg-neutral-900 border border-yellow-600/40 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/40 outline-none pl-11 md:pl-12 pr-10 py-3.5 md:py-4 text-white placeholder-neutral-400 rounded-xl transition text-sm md:text-base shadow-inner"
+            placeholder="Search artists, titles, or describe in plain English (e.g. 'blue god playing flute', 'elephants for living room', 'under ₹15,000')..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            className="w-full bg-neutral-900 border border-yellow-600/40 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/40 outline-none pl-11 md:pl-12 pr-28 py-3.5 md:py-4 text-white placeholder-neutral-400 rounded-xl transition text-sm md:text-base shadow-inner"
+            aria-label="Search artworks"
           />
-          {searchQuery && (
-            <button
-              onClick={() => updateFilter({ q: null })}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white text-sm"
-              aria-label="Clear search"
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+            {inputValue && (
+              <button
+                type="button"
+                onClick={() => {
+                  setInputValue("");
+                  updateFilter({ q: null });
+                }}
+                className="text-neutral-400 hover:text-white text-xs bg-neutral-800 hover:bg-neutral-700 px-2 py-1 rounded transition"
+                aria-label="Clear search"
+              >
+                ✕ Clear
+              </button>
+            )}
+            <span
+              className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium text-yellow-400/90 bg-yellow-500/10 border border-yellow-500/25 px-2.5 py-1 rounded-md"
+              title="Hybrid Natural Language, Phonetic & Curated Indian Art Engine"
             >
-              ✕
-            </button>
-          )}
+              ✦ AI Discovery
+            </span>
+          </div>
         </div>
+
+        {/* CURATED NATURAL LANGUAGE EXAMPLE PROMPTS */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-4 scrollbar-none text-xs text-neutral-400">
+          <span className="shrink-0 text-yellow-500/80 font-medium">Try:</span>
+          {[
+            "Blue-skinned god playing flute",
+            "Elephants & gold for living room",
+            "Palace with miniature figures",
+            "Original art under ₹15,000",
+            "Madhubani & intricate patterns",
+            "Monsoon courtyard rain",
+          ].map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              onClick={() => {
+                setInputValue(prompt);
+                updateFilter({ q: prompt });
+              }}
+              className="shrink-0 px-3 py-1 rounded-full bg-neutral-900/90 border border-yellow-600/30 text-neutral-300 hover:text-yellow-300 hover:border-yellow-400 transition"
+            >
+              ✦ {prompt}
+            </button>
+          ))}
+        </div>
+
+        {/* "DID YOU MEAN..." SUGGESTION CARD */}
+        {searchPkg.suggestion &&
+          searchPkg.suggestion.toLowerCase() !== (searchQuery || "").toLowerCase() && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-yellow-300 shadow-md">
+              <div className="flex items-center gap-2">
+                <span className="text-yellow-500 font-bold">✦</span>
+                <span className="text-neutral-300">Did you mean:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInputValue(searchPkg.suggestion!);
+                    updateFilter({ q: searchPkg.suggestion });
+                  }}
+                  className="font-semibold text-yellow-400 underline hover:text-yellow-200 transition"
+                >
+                  &ldquo;{searchPkg.suggestion}&rdquo;
+                </button>
+                <span className="text-neutral-400">?</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setInputValue(searchPkg.suggestion!);
+                  updateFilter({ q: searchPkg.suggestion });
+                }}
+                className="text-[11px] text-black bg-yellow-400 hover:bg-yellow-300 font-semibold px-2.5 py-1 rounded transition shrink-0"
+              >
+                Search this instead
+              </button>
+            </div>
+          )}
 
         {/* FACET FILTER & CONTROLS CONTAINER */}
         <div className="flex flex-col gap-4 border border-yellow-600/30 p-4 md:p-6 rounded-2xl bg-neutral-900/90 backdrop-blur-sm shadow-xl">
@@ -499,8 +598,34 @@ export default function ExploreClient() {
               {searchQuery && (
                 <span className="inline-flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs px-2.5 py-1 rounded-full">
                   &ldquo;{searchQuery}&rdquo;
-                  <button onClick={() => updateFilter({ q: null })} className="hover:text-white" aria-label="Clear search term">✕</button>
+                  <button onClick={() => { setInputValue(""); updateFilter({ q: null }); }} className="hover:text-white" aria-label="Clear search term">✕</button>
                 </span>
+              )}
+
+              {/* Natural Language Extracted Intent Badges */}
+              {searchQuery && searchPkg.intent.isNaturalLanguage && (
+                <>
+                  {searchPkg.intent.extractedPriceLimit !== null && (
+                    <span className="inline-flex items-center gap-1 bg-yellow-500/15 border border-yellow-500/30 text-yellow-300 text-xs px-2.5 py-1 rounded-full">
+                      ✦ Max ₹{searchPkg.intent.extractedPriceLimit.toLocaleString("en-IN")}
+                    </span>
+                  )}
+                  {searchPkg.intent.extractedFormat && (
+                    <span className="inline-flex items-center gap-1 bg-yellow-500/15 border border-yellow-500/30 text-yellow-300 text-xs px-2.5 py-1 rounded-full capitalize">
+                      ✦ {searchPkg.intent.extractedFormat}
+                    </span>
+                  )}
+                  {searchPkg.intent.extractedRooms.map((r) => (
+                    <span key={r} className="inline-flex items-center gap-1 bg-yellow-500/15 border border-yellow-500/30 text-yellow-300 text-xs px-2.5 py-1 rounded-full">
+                      ✦ {r}
+                    </span>
+                  ))}
+                  {searchPkg.intent.detectedThemes.map((t) => (
+                    <span key={t} className="inline-flex items-center gap-1 bg-yellow-500/15 border border-yellow-500/30 text-yellow-300 text-xs px-2.5 py-1 rounded-full">
+                      ✦ {t}
+                    </span>
+                  ))}
+                </>
               )}
 
               {hasActiveFilters && (
@@ -554,24 +679,46 @@ export default function ExploreClient() {
           <p className="text-4xl md:text-5xl mb-4">🎨</p>
           <h2 className="text-white text-lg md:text-xl mb-2 font-display">No matching artworks found</h2>
           <p className="text-neutral-400 text-sm mb-6 leading-relaxed">
-            We couldn&apos;t find any pieces matching your current filters. Try one of our suggested curated terms or reset your filters:
+            {searchQuery
+              ? `We couldn't find any artworks matching "${searchQuery}". Try a broader description, or check the suggested terms below:`
+              : "We couldn't find any pieces matching your current filters. Try one of our suggested curated terms or reset your filters:"}
           </p>
+          {searchPkg.suggestion && (
+            <div className="mb-6 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl inline-flex items-center gap-2 text-xs text-yellow-300">
+              <span>Did you mean:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setInputValue(searchPkg.suggestion!);
+                  updateFilter({ q: searchPkg.suggestion });
+                }}
+                className="font-bold underline text-yellow-400 hover:text-white"
+              >
+                &ldquo;{searchPkg.suggestion}&rdquo;
+              </button>
+            </div>
+          )}
           <div className="flex flex-wrap justify-center gap-2 mb-6">
-            {["Acrylic on Canvas", "Oil on Canvas", "Miniature", "Kerala Mural", "Heritage Gold", "Digital"].map((tag) => (
+            {["Blue god flute", "Elephants & gold", "Miniature palace", "Pichwai", "Kerala Mural", "Under ₹15000"].map((tag) => (
               <button
                 key={tag}
-                onClick={() => updateFilter({ q: tag, type: null, medium: null, tradition: null, room: null, price: null })}
+                type="button"
+                onClick={() => {
+                  setInputValue(tag);
+                  updateFilter({ q: tag, type: null, medium: null, tradition: null, room: null, price: null });
+                }}
                 className="px-3 py-1 bg-black border border-yellow-600/40 text-yellow-400 rounded-full text-xs hover:bg-yellow-500/10 transition"
               >
-                {tag}
+                ✦ {tag}
               </button>
             ))}
           </div>
           <button
+            type="button"
             onClick={clearAll}
             className="border border-yellow-500 text-yellow-400 px-6 py-2.5 rounded-lg hover:bg-yellow-500 hover:text-black transition font-semibold text-sm"
           >
-            Clear All Filters
+            Clear All Filters & Search
           </button>
         </div>
       ) : (
@@ -580,6 +727,7 @@ export default function ExploreClient() {
             <ArtworkCard
               key={art.id}
               artwork={art}
+              matchReasons={searchQuery ? reasonsMap[art.id] : undefined}
               onViewInRoom={(item) => setSelectedRoomArtwork(item)}
             />
           ))}

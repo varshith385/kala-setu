@@ -7,6 +7,7 @@
 
 import { artworks, Artwork } from "@/app/data/artworks";
 import { artists } from "@/app/data/artists";
+import { searchArtworks, SearchResultPackage } from "./artSearchEngine";
 
 export type Artist = (typeof artists)[number];
 
@@ -228,18 +229,12 @@ export function filterArtworks(options: FilterOptions = {}): Artwork[] {
     result = result.filter((a) => getEffectivePrice(a) <= maxPrice);
   }
 
-  // Search query
+  // Search query (AI-Powered Hybrid Natural Language Art Discovery)
+  let searchApplied = false;
   if (searchQuery && searchQuery.trim()) {
-    const q = searchQuery.trim().toLowerCase();
-    result = result.filter(
-      (a) =>
-        a.title.toLowerCase().includes(q) ||
-        a.artist?.name.toLowerCase().includes(q) ||
-        a.description?.toLowerCase().includes(q) ||
-        a.details?.regionalTradition?.toLowerCase().includes(q) ||
-        a.details?.style?.toLowerCase().includes(q) ||
-        a.tags?.some((t) => t.toLowerCase().includes(q))
-    );
+    const searchPackage = searchArtworks(searchQuery, result);
+    result = searchPackage.artworks;
+    searchApplied = true;
   }
 
   // Sorting
@@ -262,14 +257,26 @@ export function filterArtworks(options: FilterOptions = {}): Artwork[] {
       break;
     case "featured":
     default:
-      // Featured items first, then by ID
-      result.sort((a, b) => {
-        if (a.featured && !b.featured) return -1;
-        if (!a.featured && b.featured) return 1;
-        return a.id.localeCompare(b.id);
-      });
+      // If search query was applied, preserve the hybrid relevance score ordering;
+      // otherwise fallback to standard featured curation.
+      if (!searchApplied) {
+        result.sort((a, b) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return a.id.localeCompare(b.id);
+        });
+      }
       break;
   }
 
   return result;
+}
+
+/**
+ * High-level catalogue search that returns full hybrid discovery diagnostics
+ * including parsed intent, suggestion, and match explanations.
+ */
+export function searchCatalogue(query: string, options: Omit<FilterOptions, "searchQuery"> = {}): SearchResultPackage {
+  const candidates = filterArtworks({ ...options, sortBy: "featured" });
+  return searchArtworks(query, candidates);
 }
