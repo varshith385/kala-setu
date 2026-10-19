@@ -4,6 +4,12 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { artists } from "../data/artists";
+import {
+  buildWhatsAppInquiryMessage,
+  buildWhatsAppUrl,
+  normalizeWhatsAppPhone,
+  openWhatsAppSafely,
+} from "../lib/whatsapp";
 
 function CustomRequestContent() {
   const searchParams = useSearchParams();
@@ -25,6 +31,9 @@ function CustomRequestContent() {
   const [errorMessage, setErrorMessage] = useState("");
   const [copied, setCopied] = useState(false);
   const [generatedMessage, setGeneratedMessage] = useState("");
+  const [whatsappUrl, setWhatsappUrl] = useState("");
+  const [normalizedPhone, setNormalizedPhone] = useState("");
+  const [popupBlocked, setPopupBlocked] = useState(false);
 
   const selectedArtist = artists.find((a) => a.id === form.artistId);
 
@@ -37,31 +46,35 @@ function CustomRequestContent() {
       return;
     }
 
-    const message = `🎨 *Kala Setu Custom Art Commission Enquiry*
-----------------------------------------
-*Collector Name:* ${form.name.trim()}
-${form.phone ? `*Phone:* ${form.phone.trim()}\n` : ""}${form.email ? `*Email:* ${form.email.trim()}\n` : ""}
-*Artist Selected:* ${selectedArtist.name}
-*Preferred Medium:* ${form.medium}
-*Desired Size:* ${form.size}
-*Budget Range:* ₹${form.budget.trim() || "Open to artist proposal"}
+    try {
+      const message = buildWhatsAppInquiryMessage({
+        collectorName: form.name,
+        collectorPhone: form.phone,
+        collectorEmail: form.email,
+        artistName: selectedArtist.name,
+        artistLocation: selectedArtist.location,
+        artworkReference: refParam || undefined,
+        medium: form.medium,
+        size: form.size,
+        budget: form.budget,
+        vision: form.idea,
+      });
 
-*Enquiry / Creative Vision:*
-${form.idea.trim()}
-----------------------------------------
-_Initiated securely via Kala Setu Art Marketplace_`;
+      const waUrl = buildWhatsAppUrl(selectedArtist.phone, message);
+      const cleanPhone = normalizeWhatsAppPhone(selectedArtist.phone);
 
-    setGeneratedMessage(message);
+      setGeneratedMessage(message);
+      setWhatsappUrl(waUrl);
+      setNormalizedPhone(cleanPhone);
 
-    const cleanPhone = selectedArtist.phone.replace(/[^0-9]/g, "");
-    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
-
-    // Open WhatsApp in new tab so user never loses their session
-    if (typeof window !== "undefined") {
-      window.open(waUrl, "_blank", "noopener,noreferrer");
+      // Attempt to open WhatsApp directly
+      const openResult = openWhatsAppSafely(waUrl);
+      setPopupBlocked(openResult.popupBlocked);
+      setSubmitted(true);
+    } catch (err: unknown) {
+      const errText = err instanceof Error ? err.message : "Failed to prepare inquiry for WhatsApp";
+      setErrorMessage(errText);
     }
-
-    setSubmitted(true);
   };
 
   return (
@@ -91,27 +104,43 @@ _Initiated securely via Kala Setu Art Marketplace_`;
           <p className="text-gray-300 text-sm leading-relaxed mb-4">
             Your inquiry for <strong className="text-yellow-400">{selectedArtist?.name}</strong> has been drafted.
           </p>
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3.5 text-xs text-yellow-300 mb-6 text-left leading-relaxed">
-            <strong>Next Step:</strong> Please ensure you press <strong>&ldquo;Send&rdquo;</strong> in your WhatsApp chat window to deliver your inquiry to the artist. If WhatsApp did not open automatically, you can open it below or copy the message text.
-          </div>
+
+          {popupBlocked ? (
+            <div className="bg-amber-500/10 border border-amber-500/40 rounded-xl p-4 text-xs text-amber-300 mb-6 text-left leading-relaxed flex items-start gap-3" role="alert">
+              <span className="text-base select-none">⚠️</span>
+              <div>
+                <p className="font-semibold text-amber-200">Popup Blocked by Browser</p>
+                <p className="mt-1 text-amber-300/90">
+                  Your browser prevented WhatsApp from opening automatically. Click <strong>&ldquo;Open WhatsApp Now&rdquo;</strong> below to start your conversation with the artist.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3.5 text-xs text-yellow-300 mb-6 text-left leading-relaxed">
+              <strong>Next Step:</strong> WhatsApp was opened in a new tab. Please ensure you press <strong>&ldquo;Send&rdquo;</strong> in your WhatsApp chat window to deliver your inquiry to the artist. If WhatsApp did not open automatically, you can open it below or copy the message text.
+            </div>
+          )}
+
           <div className="border border-yellow-600/20 bg-black/60 rounded-xl p-4 text-left text-xs text-gray-400 mb-6 space-y-2">
             <p><strong className="text-gray-300">Artist:</strong> {selectedArtist?.name} ({selectedArtist?.location})</p>
-            <p><strong className="text-gray-300">Commission Concierge Phone:</strong> {selectedArtist?.phone}</p>
+            <p><strong className="text-gray-300">WhatsApp Destination:</strong> +{normalizedPhone || "918522847389"}</p>
+            {refParam && (
+              <p><strong className="text-gray-300">Reference Artwork:</strong> {refParam}</p>
+            )}
             <p><strong className="text-gray-300">Format:</strong> {form.medium} · {form.size}</p>
-            <p><strong className="text-gray-300">Budget:</strong> ₹{form.budget || "Open to artist proposal"}</p>
+            <p><strong className="text-gray-300">Budget:</strong> ₹{form.budget.trim() || "Open to artist proposal"}</p>
           </div>
+
           <div className="flex flex-wrap gap-3 justify-center mb-6">
-            <button
-              type="button"
-              onClick={() => {
-                const cleanPhone = (selectedArtist?.phone || "").replace(/[^0-9]/g, "");
-                const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(generatedMessage)}`;
-                window.open(waUrl, "_blank", "noopener,noreferrer");
-              }}
-              className="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2.5 rounded-lg text-sm font-semibold transition"
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2.5 rounded-lg text-sm font-semibold transition inline-flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_25px_rgba(234,179,8,0.5)] cursor-pointer"
             >
-              Open WhatsApp Again →
-            </button>
+              <span>💬</span>
+              <span>{popupBlocked ? "Open WhatsApp Now →" : "Open WhatsApp Again →"}</span>
+            </a>
             <button
               type="button"
               onClick={() => {
@@ -121,18 +150,21 @@ _Initiated securely via Kala Setu Art Marketplace_`;
                   setTimeout(() => setCopied(false), 2500);
                 }
               }}
-              className="border border-yellow-600/50 text-yellow-400 hover:bg-yellow-500/10 px-6 py-2.5 rounded-lg text-sm transition"
+              className="border border-yellow-600/50 text-yellow-400 hover:bg-yellow-500/10 px-6 py-2.5 rounded-lg text-sm transition cursor-pointer"
             >
               {copied ? "✓ Copied to Clipboard" : "Copy Inquiry Message"}
             </button>
           </div>
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4 border-t border-yellow-600/15">
             <button
+              type="button"
               onClick={() => {
                 setSubmitted(false);
                 setCopied(false);
+                setPopupBlocked(false);
               }}
-              className="text-gray-400 hover:text-white px-4 py-2 text-xs transition"
+              className="text-gray-400 hover:text-white px-4 py-2 text-xs transition cursor-pointer"
             >
               ← Edit & Submit Another Request
             </button>
