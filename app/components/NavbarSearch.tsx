@@ -218,13 +218,17 @@ export default function NavbarSearch({
       {/* Autocomplete Results Dropdown */}
       {isOpen && query.trim() && searchResult && (
         <div
-          className={`absolute left-0 top-full mt-2 w-full min-w-[280px] sm:min-w-[340px] md:min-w-[420px] max-w-[95vw] bg-neutral-950/98 backdrop-blur-md border border-yellow-600/40 rounded-xl shadow-2xl z-50 overflow-hidden text-xs`}
+          className={`absolute left-0 top-full mt-2 w-full ${
+            isMobile
+              ? "min-w-0 max-w-full"
+              : "min-w-[280px] sm:min-w-[340px] md:min-w-[420px] max-w-[95vw]"
+          } bg-neutral-950/98 backdrop-blur-md border border-yellow-600/40 rounded-xl shadow-2xl z-50 overflow-hidden text-xs`}
           role="region"
           aria-label="Search Suggestions and Results"
         >
           {/* Typo / Query Suggestion Banner */}
           {searchResult.suggestion && (
-            <div className="bg-yellow-500/10 border-b border-yellow-600/20 px-3.5 py-2 flex items-center justify-between text-yellow-300">
+            <div className={`bg-yellow-500/10 border-b border-yellow-600/20 ${isMobile ? "px-3 py-1.5" : "px-3.5 py-2"} flex items-center justify-between text-yellow-300`}>
               <span>
                 Did you mean:{" "}
                 <button
@@ -241,7 +245,7 @@ export default function NavbarSearch({
 
           {/* Natural Language Intent Badges */}
           {searchResult.intent && searchResult.intent.isNaturalLanguage && (
-            <div className="px-3.5 py-2 border-b border-yellow-600/15 bg-neutral-900/40 flex flex-wrap gap-1.5 items-center">
+            <div className={`${isMobile ? "px-3 py-1.5 gap-1" : "px-3.5 py-2 gap-1.5"} border-b border-yellow-600/15 bg-neutral-900/40 flex flex-wrap items-center`}>
               <span className="text-[10px] text-neutral-400 uppercase tracking-wider">Detected:</span>
               {searchResult.intent.extractedMediums && searchResult.intent.extractedMediums.length > 0 && (
                 <span className="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[10px]">
@@ -280,9 +284,9 @@ export default function NavbarSearch({
                   key={artwork.id}
                   href={`/explore/${artwork.slug}`}
                   onClick={handleSelectArtwork}
-                  className="flex items-center gap-3 p-2.5 hover:bg-neutral-900/80 transition group"
+                  className={`flex items-center ${isMobile ? "gap-2.5 p-2" : "gap-3 p-2.5"} hover:bg-neutral-900/80 transition group`}
                 >
-                  <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-neutral-900 shrink-0 border border-yellow-600/20">
+                  <div className={`relative ${isMobile ? "w-10 h-10" : "w-12 h-12"} rounded-lg overflow-hidden bg-neutral-900 shrink-0 border border-yellow-600/20`}>
                     <Image
                       src={artwork.images[0] || artwork.thumbnail}
                       alt={artwork.title}
@@ -315,7 +319,7 @@ export default function NavbarSearch({
 
           {/* Footer View All Link */}
           {searchResult.results.length > 0 && (
-            <div className="p-2.5 bg-neutral-900/90 border-t border-yellow-600/20 text-center">
+            <div className={`${isMobile ? "p-2" : "p-2.5"} bg-neutral-900/90 border-t border-yellow-600/20 text-center`}>
               <Link
                 href={`/explore?q=${encodeURIComponent(query.trim())}`}
                 onClick={handleSelectArtwork}
